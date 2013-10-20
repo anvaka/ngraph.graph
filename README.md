@@ -1,7 +1,8 @@
 ngraph.graph
 ============
 
-Base [graph](http://en.wikipedia.org/wiki/Graph_(mathematics)) structure in ngraph.X. Library implments API to modify graph structure and supports event-driven notifications when graph changes.
+Base [graph](http://en.wikipedia.org/wiki/Graph_\(mathematics\)] structure in ngraph.X. Library implments API to modify graph structure and supports event-driven notifications when graph changes.
+[![build status](https://secure.travis-ci.org/anvaka/ngraph.graph.png)](http://travis-ci.org/anvaka/ngraph.graph)
 
 ## Creating a graph
 Create a graph with no edges and no nodes:
@@ -64,7 +65,6 @@ g.forEachLink(function(link) {
 ```
 
 To enumerate all links for a specific node use `forEachLinkedNode()` method:
-
 ``` js
 g.forEachLinkedNode('hello', function(linkedNode, link){
     console.log("Connected node: ", linkedNode.id, linkedNode.data); 
@@ -72,7 +72,15 @@ g.forEachLinkedNode('hello', function(linkedNode, link){
 });
 ```
 
-This method always enumerates both inbound and outbound links. To get a particular node object use `getNode()` method. E.g.:
+This method always enumerates both inbound and outbound links. If you want to get only outbound links, pass third optional argument:
+``` js
+g.forEachLinkedNode('hello',
+    function(linkedNode, link) { /* ... */ },
+    true // enumerate only outbound links
+  );
+```
+
+To get a particular node object use `getNode()` method. E.g.:
 
 ``` js
 var world = g.getNode('world'); // returns 'world' node
@@ -95,7 +103,7 @@ Whenever someone changes your graph you can listen to notifications:
 ``` js
 g.on('changed', function(changes) {
   console.dir(changes); // prints array of change records
-})
+});
 
 g.add(42); // this will trigger 'changed event'
 ```
