@@ -1,7 +1,8 @@
 ngraph.graph
 ============
 
-Base [graph](http://en.wikipedia.org/wiki/Graph_\(mathematics\)] structure in ngraph.X. Library implments API to modify graph structure and supports event-driven notifications when graph changes.
+Base [graph](http://en.wikipedia.org/wiki/Graph_(mathematics\)) structure in ngraph.X. Library implments API to modify graph structure and supports event-driven notifications when graph changes.
+
 [![build status](https://secure.travis-ci.org/anvaka/ngraph.graph.png)](http://travis-ci.org/anvaka/ngraph.graph)
 
 ## Creating a graph
