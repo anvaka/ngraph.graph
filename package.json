@@ -1,0 +1,28 @@
+{
+  "name": "ngraph.graph",
+  "version": "0.0.1",
+  "description": "Base graph structure in ngraph.*",
+  "main": "index.js",
+  "scripts": {
+    "test": "tap test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anvaka/ngraph.graph.git"
+  },
+  "keywords": [
+    "ngraph",
+    "ngraphjs"
+  ],
+  "author": "Andrei Kashcha",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/anvaka/ngraph.grpaph/issues"
+  },
+  "devDependencies": {
+    "tap": "~0.4.4"
+  },
+  "dependencies": {
+    "ngraph.events": "0.0.1"
+  }
+}
