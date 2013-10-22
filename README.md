@@ -145,20 +145,6 @@ With [npm](http://npmjs.org) do:
 npm install ngraph.graph
 ```
 
-### Browser
-Get [browserify](http://browserify.org/) if you don't have it yet (first line):
-
-```
-npm install -g browserify
-npm install ngraph.graph
-browserify index.js -s createGraph -o ngraph.graph.js
-```
-
-Now you are ready to use ```createGraph()``` within browser:
-``` html
-<script src="ngraph.graph.js"></script>
-```
-
 License
 =======
 BSD 3-clause
