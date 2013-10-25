@@ -1,7 +1,7 @@
 ngraph.graph
 ============
 
-Base [graph](http://en.wikipedia.org/wiki/Graph_(mathematics\)) structure in ngraph.X. Library implments API to modify graph structure and supports event-driven notifications when graph changes.
+[Graph](http://en.wikipedia.org/wiki/Graph_(mathematics\)) data structure for ngraph.\*. Library implements API to modify graph structure and supports event-driven notifications when graph changes.
 
 [![build status](https://secure.travis-ci.org/anvaka/ngraph.graph.png)](http://travis-ci.org/anvaka/ngraph.graph)
 
@@ -143,20 +143,6 @@ With [npm](http://npmjs.org) do:
 
 ```
 npm install ngraph.graph
-```
-
-### Browser
-Get [browserify](http://browserify.org/) if you don't have it yet (first line):
-
-```
-npm install -g browserify
-npm install ngraph.graph
-browserify index.js -s createGraph -o ngraph.graph.js
-```
-
-Now you are ready to use ```createGraph()``` within browser:
-``` html
-<script src="ngraph.graph.js"></script>
 ```
 
 License
