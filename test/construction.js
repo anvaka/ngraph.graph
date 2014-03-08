@@ -14,6 +14,21 @@ test('add node adds node', function(t) {
   t.end();
 });
 
+test('add nodeid same as a prototype property', function (t) {
+  var graph = createGraph();
+  graph.addNode('constructor');
+  graph.addLink('watch', 'constructor');
+
+  var iterated = 0;
+  graph.forEachNode(function () {
+    iterated += 1;
+  });
+
+  t.ok(graph.hasLink('watch', 'constructor'));
+  t.equal(iterated, 2, 'has two nodes');
+  t.end();
+});
+
 test('add link adds link', function(t) {
   var graph = createGraph();
 

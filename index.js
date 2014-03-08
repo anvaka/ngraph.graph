@@ -17,7 +17,7 @@ module.exports = function () {
     // array is used to speed up all links enumeration. This is inefficient
     // in terms of memory, but simplifies coding.
 
-    var nodes = {},
+    var nodes = typeof Object.create === 'function' ? Object.create(null) : {},
         links = [],
         // Hash of multi-edges. Used to track ids of edges between same nodes
         multiEdges = {},
@@ -260,10 +260,8 @@ module.exports = function () {
             var node;
 
             for (node in nodes) {
-                if (nodes.hasOwnProperty(node)) {
-                    if (callback(nodes[node])) {
-                        return; // client doesn't want to proceed. return.
-                    }
+                if (callback(nodes[node])) {
+                    return; // client doesn't want to proceed. return.
                 }
             }
         },
