@@ -23,6 +23,6 @@
     "tap": "~0.4.4"
   },
   "dependencies": {
-    "ngraph.events": "0.0.1"
+    "ngraph.events": "0.0.3"
   }
 }
