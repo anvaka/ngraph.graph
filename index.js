@@ -9,7 +9,7 @@
  *  graph.addLink(2, 3);  // now graph contains three nodes and one link.
  *
  */
-module.exports = function() {
+module.exports = function(useForIterator) {
   // Graph structure is maintained as dictionary of nodes
   // and array of links. Each node has 'links' property which
   // hold all links related to that node. And general links
@@ -264,18 +264,7 @@ module.exports = function() {
      * @param {Function(node)} callback Function to be invoked. The function
      *   is passed one argument: visited node.
      */
-    forEachNode: function(callback) {
-      if (typeof callback !== 'function') {
-        return;
-      }
-      var node;
-
-      for (node in nodes) {
-        if (callback(nodes[node])) {
-          return; // client doesn't want to proceed. return.
-        }
-      }
-    },
+    forEachNode: createNodeIterator(),
 
     /**
      * Invokes callback on every linked (adjacent) node to the given one.
@@ -389,6 +378,37 @@ module.exports = function() {
   eventify(graphPart);
 
   return graphPart;
+
+  function createNodeIterator() {
+    // Object.keys iterator is will be 1.3x faster than `for in` loop.
+    return Object.keys && !useForIterator ? objectKeysIterator : forInIterator;
+  }
+
+  function objectKeysIterator(callback) {
+    if (typeof callback !== 'function') {
+      return;
+    }
+
+    var keys = Object.keys(nodes);
+    for (var i = 0; i < keys.length; ++i) {
+      if (callback(nodes[keys[i]])) {
+        return;
+      }
+    }
+  }
+
+  function forInIterator(callback) {
+    if (typeof callback !== 'function') {
+      return;
+    }
+    var node;
+
+    for (node in nodes) {
+      if (callback(nodes[node])) {
+        return; // client doesn't want to proceed. return.
+      }
+    }
+  }
 };
 
 // need this for old browsers. Should this be a separate module?

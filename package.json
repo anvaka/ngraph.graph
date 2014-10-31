@@ -20,6 +20,7 @@
     "url": "https://github.com/anvaka/ngraph.graph/issues"
   },
   "devDependencies": {
+    "benchmark": "^1.0.0",
     "tap": "~0.4.4"
   },
   "dependencies": {
