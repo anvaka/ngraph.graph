@@ -281,7 +281,7 @@ module.exports = function() {
         linkedNodeId;
 
       if (node && node.links && typeof callback === 'function') {
-        // Extraced orientation check out of the loop to increase performance
+        // Extracted orientation check out of the loop to increase performance
         if (oriented) {
           for (i = 0; i < node.links.length; ++i) {
             link = node.links[i];
