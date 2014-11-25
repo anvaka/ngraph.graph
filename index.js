@@ -23,7 +23,7 @@ module.exports = function() {
     nodesCount = 0,
     suspendEvents = 0,
 
-    // Accumlates all changes made during graph updates.
+    // Accumulates all changes made during graph updates.
     // Each change element contains:
     //  changeType - one of the strings: 'add', 'remove' or 'update';
     //  node - if change is related to node this property is set to changed graph's node;
@@ -34,7 +34,7 @@ module.exports = function() {
       graph.fire('changed', changes);
     },
 
-    // Enter, Exit Mofidication allows bulk graph updates without firing events.
+    // Enter, Exit modification allows bulk graph updates without firing events.
     enterModification = function() {
       suspendEvents += 1;
     },
@@ -394,7 +394,7 @@ module.exports = function() {
     var keys = Object.keys(nodes);
     for (var i = 0; i < keys.length; ++i) {
       if (callback(nodes[keys[i]])) {
-        return; // client doesn't want to proceed. return.
+        return; // client doesn't want to proceed. Return.
       }
     }
   }
@@ -407,7 +407,7 @@ module.exports = function() {
 
     for (node in nodes) {
       if (callback(nodes[node])) {
-        return; // client doesn't want to proceed. return.
+        return; // client doesn't want to proceed. Return.
       }
     }
   }

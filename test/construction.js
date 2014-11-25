@@ -14,7 +14,7 @@ test('add node adds node', function(t) {
   t.end();
 });
 
-test('add nodeid same as a prototype property', function (t) {
+test('add nodeId same as a prototype property', function (t) {
   var graph = createGraph();
   graph.addNode('constructor');
   graph.addLink('watch', 'constructor');

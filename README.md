@@ -17,8 +17,8 @@ var g = createGraph();
 The graph `g` can be grown in two ways. You can add one node at a time:
 
 ``` js
-g.addNode('hello'); 
-g.addNode('world'); 
+g.addNode('hello');
+g.addNode('world');
 ```
 
 Now graph `g` contains two nodes: `hello` and `world`. You can also use `addLink()` method to grow a graph. Calling this method with nodes which are not present in the graph creates them:
@@ -68,7 +68,7 @@ g.forEachLink(function(link) {
 To enumerate all links for a specific node use `forEachLinkedNode()` method:
 ``` js
 g.forEachLinkedNode('hello', function(linkedNode, link){
-    console.log("Connected node: ", linkedNode.id, linkedNode.data); 
+    console.log("Connected node: ", linkedNode.id, linkedNode.data);
     console.dir(link); // link object itself
 });
 ```
@@ -94,7 +94,7 @@ Finally to remove a node or a link from a graph use `removeNode()` or `removeLin
 g.removeNode('space');
 // Removing link is a bit harder, since method requires actual link object:
 g.forEachLinkedNode('hello', function(linkedNode, link){
-  g.removeLink(link); 
+  g.removeLink(link);
 });
 ```
 
