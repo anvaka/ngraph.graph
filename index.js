@@ -9,7 +9,9 @@
  *  graph.addLink(2, 3);  // now graph contains three nodes and one link.
  *
  */
-module.exports = function() {
+module.exports = createGraph;
+
+function createGraph() {
   // Graph structure is maintained as dictionary of nodes
   // and array of links. Each node has 'links' property which
   // hold all links related to that node. And general links
@@ -29,41 +31,11 @@ module.exports = function() {
     //  node - if change is related to node this property is set to changed graph's node;
     //  link - if change is related to link this property is set to changed graph's link;
     changes = [],
-
-    fireGraphChanged = function(graph) {
-      graph.fire('changed', changes);
-    },
-
-    // Enter, Exit modification allows bulk graph updates without firing events.
-    enterModification = function() {
-      suspendEvents += 1;
-    },
-
-    exitModification = function(graph) {
-      suspendEvents -= 1;
-      if (suspendEvents === 0 && changes.length > 0) {
-        fireGraphChanged(graph);
-        changes.length = 0;
-      }
-    },
-
-    recordNodeChange = function(node, changeType) {
-      changes.push({
-        node: node,
-        changeType: changeType
-      });
-    },
-
-    recordLinkChange = function(link, changeType) {
-      changes.push({
-        link: link,
-        changeType: changeType
-      });
-    },
+    forEachNode = createNodeIterator(),
     linkConnectionSymbol = '👉 ';
 
+  // this is our public API:
   var graphPart = {
-
     /**
      * Adds node to the graph. If node with given id already exists in the graph
      * its data is extended with whatever comes in 'data' argument.
@@ -75,31 +47,7 @@ module.exports = function() {
      *
      * @return {node} The newly added node or node with given id if it already exists.
      */
-    addNode: function(nodeId, data) {
-      if (typeof nodeId === 'undefined') {
-        throw new Error('Invalid node identifier');
-      }
-
-      enterModification();
-
-      var node = this.getNode(nodeId);
-      if (!node) {
-        // TODO: Should I check for linkConnectionSymbol here?
-        node = new Node(nodeId);
-        nodesCount++;
-
-        recordNodeChange(node, 'add');
-      } else {
-        recordNodeChange(node, 'update');
-      }
-
-      node.data = data;
-
-      nodes[nodeId] = node;
-
-      exitModification(this);
-      return node;
-    },
+    addNode: addNode,
 
     /**
      * Adds a link to the graph. The function always create a new
@@ -112,35 +60,7 @@ module.exports = function() {
      *
      * @return {link} The newly created link
      */
-    addLink: function(fromId, toId, data) {
-      enterModification();
-
-      var fromNode = this.getNode(fromId) || this.addNode(fromId);
-      var toNode = this.getNode(toId) || this.addNode(toId);
-
-      var linkId = fromId.toString() + linkConnectionSymbol + toId.toString();
-      var isMultiEdge = multiEdges.hasOwnProperty(linkId);
-      if (isMultiEdge || this.hasLink(fromId, toId)) {
-        if (!isMultiEdge) {
-          multiEdges[linkId] = 0;
-        }
-        linkId += '@' + (++multiEdges[linkId]);
-      }
-
-      var link = new Link(fromId, toId, data, linkId);
-
-      links.push(link);
-
-      // TODO: this is not cool. On large graphs potentially would consume more memory.
-      fromNode.links.push(link);
-      toNode.links.push(link);
-
-      recordLinkChange(link, 'add');
-
-      exitModification(this);
-
-      return link;
-    },
+    addLink: addLink,
 
     /**
      * Removes link from the graph. If link does not exist does nothing.
@@ -149,42 +69,7 @@ module.exports = function() {
      *
      * @returns true if link was removed; false otherwise.
      */
-    removeLink: function(link) {
-      if (!link) {
-        return false;
-      }
-      var idx = indexOfElementInArray(link, links);
-      if (idx < 0) {
-        return false;
-      }
-
-      enterModification();
-
-      links.splice(idx, 1);
-
-      var fromNode = this.getNode(link.fromId);
-      var toNode = this.getNode(link.toId);
-
-      if (fromNode) {
-        idx = indexOfElementInArray(link, fromNode.links);
-        if (idx >= 0) {
-          fromNode.links.splice(idx, 1);
-        }
-      }
-
-      if (toNode) {
-        idx = indexOfElementInArray(link, toNode.links);
-        if (idx >= 0) {
-          toNode.links.splice(idx, 1);
-        }
-      }
-
-      recordLinkChange(link, 'remove');
-
-      exitModification(this);
-
-      return true;
-    },
+    removeLink: removeLink,
 
     /**
      * Removes node with given id from the graph. If node does not exist in the graph
@@ -194,28 +79,7 @@ module.exports = function() {
      *
      * @returns true if node was removed; false otherwise.
      */
-    removeNode: function(nodeId) {
-      var node = this.getNode(nodeId);
-      if (!node) {
-        return false;
-      }
-
-      enterModification();
-
-      while (node.links.length) {
-        var link = node.links[0];
-        this.removeLink(link);
-      }
-
-      delete nodes[nodeId];
-      nodesCount--;
-
-      recordNodeChange(node, 'remove');
-
-      exitModification(this);
-
-      return true;
-    },
+    removeNode: removeNode,
 
     /**
      * Gets node with given identifier. If node does not exist undefined value is returned.
@@ -224,9 +88,7 @@ module.exports = function() {
      *
      * @return {node} in with requested identifier or undefined if no such node exists.
      */
-    getNode: function(nodeId) {
-      return nodes[nodeId];
-    },
+    getNode: getNode,
 
     /**
      * Gets number of nodes in this graph.
@@ -253,10 +115,7 @@ module.exports = function() {
      * @return Array of links from and to requested node if such node exists;
      *   otherwise null is returned.
      */
-    getLinks: function(nodeId) {
-      var node = this.getNode(nodeId);
-      return node ? node.links : null;
-    },
+    getLinks: getLinks,
 
     /**
      * Invokes callback on each node of the graph.
@@ -264,7 +123,7 @@ module.exports = function() {
      * @param {Function(node)} callback Function to be invoked. The function
      *   is passed one argument: visited node.
      */
-    forEachNode: createNodeIterator(),
+    forEachNode: forEachNode,
 
     /**
      * Invokes callback on every linked (adjacent) node to the given one.
@@ -274,31 +133,7 @@ module.exports = function() {
      *   The function is passed two parameters: adjacent node and link object itself.
      * @param oriented if true graph treated as oriented.
      */
-    forEachLinkedNode: function(nodeId, callback, oriented) {
-      var node = this.getNode(nodeId),
-        i,
-        link,
-        linkedNodeId;
-
-      if (node && node.links && typeof callback === 'function') {
-        // Extracted orientation check out of the loop to increase performance
-        if (oriented) {
-          for (i = 0; i < node.links.length; ++i) {
-            link = node.links[i];
-            if (link.fromId === nodeId) {
-              callback(nodes[link.toId], link);
-            }
-          }
-        } else {
-          for (i = 0; i < node.links.length; ++i) {
-            link = node.links[i];
-            linkedNodeId = link.fromId === nodeId ? link.toId : link.fromId;
-
-            callback(nodes[linkedNodeId], link);
-          }
-        }
-      }
-    },
+    forEachLinkedNode: forEachLinkedNode,
 
     /**
      * Enumerates all links in the graph
@@ -311,42 +146,24 @@ module.exports = function() {
      *  toId - node id where link ends,
      *  data - additional data passed to graph.addLink() method.
      */
-    forEachLink: function(callback) {
-      var i, length;
-      if (typeof callback === 'function') {
-        for (i = 0, length = links.length; i < length; ++i) {
-          callback(links[i]);
-        }
-      }
-    },
+    forEachLink: forEachLink,
 
     /**
      * Suspend all notifications about graph changes until
      * endUpdate is called.
      */
-    beginUpdate: function() {
-      enterModification();
-    },
+    beginUpdate: enterModification,
 
     /**
      * Resumes all notifications about graph changes and fires
      * graph 'changed' event in case there are any pending changes.
      */
-    endUpdate: function() {
-      exitModification(this);
-    },
+    endUpdate: exitModification,
 
     /**
      * Removes all nodes and links from the graph.
      */
-    clear: function() {
-      var that = this;
-      that.beginUpdate();
-      that.forEachNode(function(node) {
-        that.removeNode(node.id);
-      });
-      that.endUpdate();
-    },
+    clear: clear,
 
     /**
      * Detects whether there is a link between two nodes.
@@ -354,23 +171,7 @@ module.exports = function() {
      *
      * @returns link if there is one. null otherwise.
      */
-    hasLink: function(fromNodeId, toNodeId) {
-      // TODO: Use adjacency matrix to speed up this operation.
-      var node = this.getNode(fromNodeId),
-        i;
-      if (!node) {
-        return null;
-      }
-
-      for (i = 0; i < node.links.length; ++i) {
-        var link = node.links[i];
-        if (link.fromId === fromNodeId && link.toId === toNodeId) {
-          return link;
-        }
-      }
-
-      return null; // no link.
-    }
+    hasLink: hasLink
   };
 
   // Let graph fire events before we return it to the caller.
@@ -378,6 +179,219 @@ module.exports = function() {
   eventify(graphPart);
 
   return graphPart;
+
+  function recordLinkChange(link, changeType) {
+    changes.push({
+      link: link,
+      changeType: changeType
+    });
+  }
+
+  function recordNodeChange(node, changeType) {
+    changes.push({
+      node: node,
+      changeType: changeType
+    });
+  }
+
+  function addNode(nodeId, data) {
+    if (typeof nodeId === 'undefined') {
+      throw new Error('Invalid node identifier');
+    }
+
+    enterModification();
+
+    var node = getNode(nodeId);
+    if (!node) {
+      // TODO: Should I check for linkConnectionSymbol here?
+      node = new Node(nodeId);
+      nodesCount++;
+      recordNodeChange(node, 'add');
+    } else {
+      recordNodeChange(node, 'update');
+    }
+
+    node.data = data;
+
+    nodes[nodeId] = node;
+
+    exitModification();
+    return node;
+  }
+
+  function getNode(nodeId) {
+    return nodes[nodeId];
+  }
+
+  function removeNode(nodeId) {
+    var node = getNode(nodeId);
+    if (!node) {
+      return false;
+    }
+
+    enterModification();
+
+    while (node.links.length) {
+      var link = node.links[0];
+      removeLink(link);
+    }
+
+    delete nodes[nodeId];
+    nodesCount--;
+
+    recordNodeChange(node, 'remove');
+
+    exitModification();
+
+    return true;
+  }
+
+
+  function addLink(fromId, toId, data) {
+    enterModification();
+
+    var fromNode = getNode(fromId) || addNode(fromId);
+    var toNode = getNode(toId) || addNode(toId);
+
+    var linkId = fromId.toString() + linkConnectionSymbol + toId.toString();
+    var isMultiEdge = multiEdges.hasOwnProperty(linkId);
+    if (isMultiEdge || hasLink(fromId, toId)) {
+      if (!isMultiEdge) {
+        multiEdges[linkId] = 0;
+      }
+      linkId += '@' + (++multiEdges[linkId]);
+    }
+
+    var link = new Link(fromId, toId, data, linkId);
+
+    links.push(link);
+
+    // TODO: this is not cool. On large graphs potentially would consume more memory.
+    fromNode.links.push(link);
+    toNode.links.push(link);
+
+    recordLinkChange(link, 'add');
+
+    exitModification();
+
+    return link;
+  }
+
+  function getLinks(nodeId) {
+    var node = getNode(nodeId);
+    return node ? node.links : null;
+  }
+
+  function removeLink(link) {
+    if (!link) {
+      return false;
+    }
+    var idx = indexOfElementInArray(link, links);
+    if (idx < 0) {
+      return false;
+    }
+
+    enterModification();
+
+    links.splice(idx, 1);
+
+    var fromNode = getNode(link.fromId);
+    var toNode = getNode(link.toId);
+
+    if (fromNode) {
+      idx = indexOfElementInArray(link, fromNode.links);
+      if (idx >= 0) {
+        fromNode.links.splice(idx, 1);
+      }
+    }
+
+    if (toNode) {
+      idx = indexOfElementInArray(link, toNode.links);
+      if (idx >= 0) {
+        toNode.links.splice(idx, 1);
+      }
+    }
+
+    recordLinkChange(link, 'remove');
+
+    exitModification();
+
+    return true;
+  }
+
+  function hasLink(fromNodeId, toNodeId) {
+    // TODO: Use adjacency matrix to speed up this operation.
+    var node = getNode(fromNodeId),
+      i;
+    if (!node) {
+      return null;
+    }
+
+    for (i = 0; i < node.links.length; ++i) {
+      var link = node.links[i];
+      if (link.fromId === fromNodeId && link.toId === toNodeId) {
+        return link;
+      }
+    }
+
+    return null; // no link.
+  }
+
+  function clear() {
+    enterModification();
+    forEachNode(function(node) {
+      removeNode(node.id);
+    });
+    exitModification();
+  }
+
+  function forEachLink(callback) {
+    var i, length;
+    if (typeof callback === 'function') {
+      for (i = 0, length = links.length; i < length; ++i) {
+        callback(links[i]);
+      }
+    }
+  }
+
+  function forEachLinkedNode(nodeId, callback, oriented) {
+    var node = getNode(nodeId),
+      i,
+      link,
+      linkedNodeId;
+
+    if (node && node.links && typeof callback === 'function') {
+      // Extracted orientation check out of the loop to increase performance
+      if (oriented) {
+        for (i = 0; i < node.links.length; ++i) {
+          link = node.links[i];
+          if (link.fromId === nodeId) {
+            callback(nodes[link.toId], link);
+          }
+        }
+      } else {
+        for (i = 0; i < node.links.length; ++i) {
+          link = node.links[i];
+          linkedNodeId = link.fromId === nodeId ? link.toId : link.fromId;
+
+          callback(nodes[linkedNodeId], link);
+        }
+      }
+    }
+  }
+
+  // Enter, Exit modification allows bulk graph updates without firing events.
+  function enterModification() {
+    suspendEvents += 1;
+  }
+
+  function exitModification() {
+    suspendEvents -= 1;
+    if (suspendEvents === 0 && changes.length > 0) {
+      graphPart.fire('changed', changes);
+      changes.length = 0;
+    }
+  }
 
   function createNodeIterator() {
     // Object.keys iterator is 1.3x faster than `for in` loop.
@@ -411,7 +425,7 @@ module.exports = function() {
       }
     }
   }
-};
+}
 
 // need this for old browsers. Should this be a separate module?
 function indexOfElementInArray(element, array) {
