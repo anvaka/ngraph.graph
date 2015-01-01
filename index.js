@@ -195,7 +195,7 @@ function createGraph() {
   }
 
   function addNode(nodeId, data) {
-    if (typeof nodeId === 'undefined') {
+    if (nodeId === undefined) {
       throw new Error('Invalid node identifier');
     }
 
