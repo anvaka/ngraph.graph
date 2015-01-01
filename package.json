@@ -4,7 +4,9 @@
   "description": "Base graph structure in ngraph.*",
   "main": "index.js",
   "scripts": {
-    "test": "tap test/*.js"
+    "test": "node node_modules/argg test/*.js",
+    "plato": "plato -d reports/plato index.js",
+    "cover": "istanbul cover --dir reports/coverage node_modules/argg test/*.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +22,9 @@
     "url": "https://github.com/anvaka/ngraph.graph/issues"
   },
   "devDependencies": {
+    "argg": "0.0.1",
+    "istanbul": "^0.3.5",
+    "plato": "^1.3.0",
     "tap": "~0.4.4"
   },
   "dependencies": {
