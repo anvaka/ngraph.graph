@@ -11,6 +11,8 @@
  */
 module.exports = createGraph;
 
+var eventify = require('ngraph.events');
+
 function createGraph() {
   // Graph structure is maintained as dictionary of nodes
   // and array of links. Each node has 'links' property which
@@ -25,14 +27,25 @@ function createGraph() {
     nodesCount = 0,
     suspendEvents = 0,
 
+    forEachNode = createNodeIterator(),
+    linkConnectionSymbol = '👉 ',
+
+    // Our graph API provides means to listen to graph changes. Users can subscribe
+    // to be notified about changes in the graph by using `on` method. However
+    // in some cases they don't use it. To avoid unnecessary memory consumption
+    // we will not record graph changes until we have at least one subscriber.
+    // Code below supports this optimization.
+    //
     // Accumulates all changes made during graph updates.
     // Each change element contains:
     //  changeType - one of the strings: 'add', 'remove' or 'update';
     //  node - if change is related to node this property is set to changed graph's node;
     //  link - if change is related to link this property is set to changed graph's link;
     changes = [],
-    forEachNode = createNodeIterator(),
-    linkConnectionSymbol = '👉 ';
+    recordLinkChange = noop,
+    recordNodeChange = noop,
+    enterModification = noop,
+    exitModification = noop;
 
   // this is our public API:
   var graphPart = {
@@ -174,20 +187,42 @@ function createGraph() {
     hasLink: hasLink
   };
 
-  // Let graph fire events before we return it to the caller.
-  var eventify = require('ngraph.events');
+  // this will add `on()` and `fire()` methods.
   eventify(graphPart);
+
+  monitorSubscribers();
 
   return graphPart;
 
-  function recordLinkChange(link, changeType) {
+  function monitorSubscribers() {
+    var realOn = graphPart.on;
+
+    // replace real `on` with our temporary on, which will trigger change
+    // modification monitoring:
+    graphPart.on = on;
+
+    function on() {
+      // now it's time to start tracking stuff:
+      enterModification = enterModificationReal;
+      exitModification = exitModificationReal;
+      recordLinkChange = recordLinkChangeReal;
+      recordNodeChange = recordNodeChangeReal;
+
+      // this will replace current `on` method with real pub/sub from `eventify`.
+      graphPart.on = realOn;
+      // delegate to real `on` handler:
+      return realOn.apply(graphPart, arguments);
+    }
+  }
+
+  function recordLinkChangeReal(link, changeType) {
     changes.push({
       link: link,
       changeType: changeType
     });
   }
 
-  function recordNodeChange(node, changeType) {
+  function recordNodeChangeReal(node, changeType) {
     changes.push({
       node: node,
       changeType: changeType
@@ -380,12 +415,16 @@ function createGraph() {
     }
   }
 
+  // we will not fire anything until users of this library explicitly call `on()`
+  // method.
+  function noop() {}
+
   // Enter, Exit modification allows bulk graph updates without firing events.
-  function enterModification() {
+  function enterModificationReal() {
     suspendEvents += 1;
   }
 
-  function exitModification() {
+  function exitModificationReal() {
     suspendEvents -= 1;
     if (suspendEvents === 0 && changes.length > 0) {
       graphPart.fire('changed', changes);
