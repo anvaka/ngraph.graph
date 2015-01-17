@@ -37,7 +37,18 @@ g.addLink('hello', 'world'); // Only a link between 'hello' and 'bar' is created
 The most common and convenient choices are numbers and strings. You can associate arbitrary data with node via optional second argument of `addNode()` method:
 
 ``` js
-g.addNode('world', 'custom data'); // Now node 'world' is associated with a string object 'custom data'
+// Node 'world' is associated with a string object 'custom data'
+g.addNode('world', 'custom data');
+
+// You can associate arbitrary objects with node:
+g.addNode('server', {
+  status: 'on',
+  ip: '127.0.0.1'
+});
+
+// to get data back use `data` property of node:
+var server = g.getNode('server');
+console.log(server.data); // prints associated object
 ```
 
 You can also associate arbitrary object with a link using third optional argument of `addLink()` method:
