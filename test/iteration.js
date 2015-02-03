@@ -19,6 +19,19 @@ test('forEachLinkedNode respects orientation', function(t) {
   t.end();
 });
 
+test('forEachLinkedNode handles self-loops', function(t) {
+  t.plan(1);
+
+  var graph = createGraph();
+  graph.addLink(1, 1);
+  // we should visit exactly one time
+  graph.forEachLinkedNode(1, function(node, link) {
+    t.ok(link.fromId === 1 && link.toId === 1, 'Link 1 is visited once');
+  });
+
+  t.end();
+});
+
 test('forEachLinkedNode will not crash on invalid node id', function(t) {
   t.plan(0);
   var graph = createGraph();

@@ -303,7 +303,10 @@ function createGraph() {
 
     // TODO: this is not cool. On large graphs potentially would consume more memory.
     fromNode.links.push(link);
-    toNode.links.push(link);
+    if (fromId !== toId) {
+      // make sure we are not duplicating links for self-loops
+      toNode.links.push(link);
+    }
 
     recordLinkChange(link, 'add');
 
