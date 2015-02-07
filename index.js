@@ -181,10 +181,22 @@ function createGraph() {
     /**
      * Detects whether there is a link between two nodes.
      * Operation complexity is O(n) where n - number of links of a node.
+     * NOTE: this function is synonim for getLink()
      *
      * @returns link if there is one. null otherwise.
      */
-    hasLink: hasLink
+    hasLink: getLink,
+
+    /**
+     * Gets an edge between two nodes.
+     * Operation complexity is O(n) where n - number of links of a node.
+     *
+     * @param {string} fromId link start identifier
+     * @param {string} toId link end identifier
+     *
+     * @returns link if there is one. null otherwise.
+     */
+    getLink: getLink
   };
 
   // this will add `on()` and `fire()` methods.
@@ -290,7 +302,7 @@ function createGraph() {
 
     var linkId = fromId.toString() + linkConnectionSymbol + toId.toString();
     var isMultiEdge = multiEdges.hasOwnProperty(linkId);
-    if (isMultiEdge || hasLink(fromId, toId)) {
+    if (isMultiEdge || getLink(fromId, toId)) {
       if (!isMultiEdge) {
         multiEdges[linkId] = 0;
       }
@@ -357,7 +369,7 @@ function createGraph() {
     return true;
   }
 
-  function hasLink(fromNodeId, toNodeId) {
+  function getLink(fromNodeId, toNodeId) {
     // TODO: Use adjacency matrix to speed up this operation.
     var node = getNode(fromNodeId),
       i;

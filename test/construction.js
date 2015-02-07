@@ -32,6 +32,13 @@ test('hasLink checks links', function (t) {
   t.end();
 });
 
+test('hasLink is the same as getLink', function (t) {
+  var graph = createGraph();
+
+  t.equals(graph.getLink, graph.hasLink, 'hasLink is synonim for getLink');
+  t.end();
+});
+
 test('it throw if no node id is passed', function(t) {
   var graph = createGraph();
   t.throws(function() {
