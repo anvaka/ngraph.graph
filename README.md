@@ -99,7 +99,14 @@ var world = g.getNode('world'); // returns 'world' node
 console.log(world.id, world.data);
 ```
 
-Finally to remove a node or a link from a graph use `removeNode()` or `removeLink()` correspondingly:
+TO get a particular link object use `getLink()` method:
+
+``` js
+var helloWorldLink = g.getLink('hello', 'world'); // returns a link from 'hello' to 'world' 
+console.log(helloWorldLink);
+```
+
+To remove a node or a link from a graph use `removeNode()` or `removeLink()` correspondingly:
 
 ``` js
 g.removeNode('space');
@@ -108,6 +115,13 @@ g.forEachLinkedNode('hello', function(linkedNode, link){
   g.removeLink(link);
 });
 ```
+
+You can also remove all nodes and links by calling
+
+``` js
+g.clear();
+```
+
 
 ## Listening to Events
 Whenever someone changes your graph you can listen to notifications:
