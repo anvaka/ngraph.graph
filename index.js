@@ -405,26 +405,38 @@ function createGraph() {
   }
 
   function forEachLinkedNode(nodeId, callback, oriented) {
-    var node = getNode(nodeId),
-      i,
-      link,
-      linkedNodeId;
+    var node = getNode(nodeId);
 
     if (node && node.links && typeof callback === 'function') {
-      // Extracted orientation check out of the loop to increase performance
       if (oriented) {
-        for (i = 0; i < node.links.length; ++i) {
-          link = node.links[i];
-          if (link.fromId === nodeId) {
-            callback(nodes[link.toId], link);
-          }
-        }
+        return forEachOrientedLink(node.links, nodeId, callback);
       } else {
-        for (i = 0; i < node.links.length; ++i) {
-          link = node.links[i];
-          linkedNodeId = link.fromId === nodeId ? link.toId : link.fromId;
+        return forEachNonOrientedLink(node.links, nodeId, callback);
+      }
+    }
+  }
 
-          callback(nodes[linkedNodeId], link);
+  function forEachNonOrientedLink(links, nodeId, callback) {
+    var quitFast;
+    for (var i = 0; i < links.length; ++i) {
+      var link = links[i];
+      var linkedNodeId = link.fromId === nodeId ? link.toId : link.fromId;
+
+      quitFast = callback(nodes[linkedNodeId], link);
+      if (quitFast) {
+        return true; // Client does not need more iterations. Break now.
+      }
+    }
+  }
+
+  function forEachOrientedLink(links, nodeId, callback) {
+    var quitFast;
+    for (var i = 0; i < links.length; ++i) {
+      var link = links[i];
+      if (link.fromId === nodeId) {
+        quitFast = callback(nodes[link.toId], link);
+        if (quitFast) {
+          return true; // Client does not need more iterations. Break now.
         }
       }
     }
@@ -462,7 +474,7 @@ function createGraph() {
     var keys = Object.keys(nodes);
     for (var i = 0; i < keys.length; ++i) {
       if (callback(nodes[keys[i]])) {
-        return; // client doesn't want to proceed. Return.
+        return true; // client doesn't want to proceed. Return.
       }
     }
   }
@@ -475,7 +487,7 @@ function createGraph() {
 
     for (node in nodes) {
       if (callback(nodes[node])) {
-        return; // client doesn't want to proceed. Return.
+        return true; // client doesn't want to proceed. Return.
       }
     }
   }
