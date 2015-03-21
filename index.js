@@ -64,7 +64,8 @@ function createGraph(options) {
      * its data is extended with whatever comes in 'data' argument.
      *
      * @param nodeId the node's identifier. A string or number is preferred.
-     *   note: Node id should not contain ''. This will break link identifiers
+     *   note: If you request options.uniqueLinkId, then node id should not
+     *   contain '👉 '. This will break link identifiers
      * @param [data] additional data for the node being added. If node already
      *   exists its data object is augmented with the new one.
      *
