@@ -114,6 +114,62 @@ test('it can add multi-edges', function (t) {
   t.end();
 });
 
+test('it can produce unque link ids', function (t) {
+  t.test('by default links are unique', function (t) {
+    var graph = createGraph();
+    var seen = {};
+    graph.addLink(1, 2, 'first');
+    graph.addLink(1, 2, 'second');
+    graph.addLink(1, 2, 'third');
+    graph.forEachLink(verifyLinkIsUnique);
+    t.end();
+
+    function verifyLinkIsUnique(link) {
+      t.notOk(seen[link.id], link.id + ' is unique');
+      seen[link.id] = true;
+    }
+  });
+
+  t.test('You can also explicitly request unique links', function (t) {
+    var graph = createGraph({
+      uniqueLinkId: true
+    });
+
+    var seen = {};
+    graph.addLink(1, 2, 'first');
+    graph.addLink(1, 2, 'second');
+    graph.addLink(1, 2, 'third');
+    graph.forEachLink(verifyLinkIsUnique);
+    t.end();
+
+    function verifyLinkIsUnique(link) {
+      t.notOk(seen[link.id], link.id + ' is unique');
+      seen[link.id] = true;
+    }
+  });
+
+  t.test('you can sacrifice uniqueness in favor of performance', function (t) {
+    var graph = createGraph({
+      uniqueLinkId: false
+    });
+
+    var seen = {};
+    graph.addLink(1, 2, 'first');
+    graph.addLink(1, 2, 'second');
+    graph.addLink(1, 2, 'third');
+    graph.forEachLink(noticeLink);
+    t.equals(Object.keys(seen).length, 1, 'Only one link id');
+
+    t.end();
+
+    function noticeLink(link) {
+      seen[link.id] = true;
+    }
+  });
+
+  t.end();
+});
+
 test('add one node fires changed event', function(t) {
   t.plan(3);
   var graph = createGraph();

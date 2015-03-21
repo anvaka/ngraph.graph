@@ -13,12 +13,22 @@ module.exports = createGraph;
 
 var eventify = require('ngraph.events');
 
-function createGraph() {
+/**
+ * Creates a new graph
+ */
+function createGraph(options) {
   // Graph structure is maintained as dictionary of nodes
   // and array of links. Each node has 'links' property which
   // hold all links related to that node. And general links
   // array is used to speed up all links enumeration. This is inefficient
   // in terms of memory, but simplifies coding.
+  options = options || {};
+  if (options.uniqueLinkId === undefined) {
+    // Request each link id to be unique between same nodes. This negatively
+    // impacts `addLink()` performance (O(n), where n - number of edges of each
+    // vertex), but makes operations with multigraphs more accessible.
+    options.uniqueLinkId = true;
+  }
 
   var nodes = typeof Object.create === 'function' ? Object.create(null) : {},
     links = [],
@@ -28,7 +38,7 @@ function createGraph() {
     suspendEvents = 0,
 
     forEachNode = createNodeIterator(),
-    linkConnectionSymbol = '👉 ',
+    createLink = options.uniqueLinkId ? createUniqueLink : createSingleLink,
 
     // Our graph API provides means to listen to graph changes. Users can subscribe
     // to be notified about changes in the graph by using `on` method. However
@@ -54,7 +64,7 @@ function createGraph() {
      * its data is extended with whatever comes in 'data' argument.
      *
      * @param nodeId the node's identifier. A string or number is preferred.
-     *   note: Node id should not contain 'linkConnectionSymbol'. This will break link identifiers
+     *   note: Node id should not contain ''. This will break link identifiers
      * @param [data] additional data for the node being added. If node already
      *   exists its data object is augmented with the new one.
      *
@@ -250,7 +260,7 @@ function createGraph() {
 
     var node = getNode(nodeId);
     if (!node) {
-      // TODO: Should I check for linkConnectionSymbol here?
+      // TODO: Should I check for 👉  here?
       node = new Node(nodeId);
       nodesCount++;
       recordNodeChange(node, 'add');
@@ -300,16 +310,7 @@ function createGraph() {
     var fromNode = getNode(fromId) || addNode(fromId);
     var toNode = getNode(toId) || addNode(toId);
 
-    var linkId = fromId.toString() + linkConnectionSymbol + toId.toString();
-    var isMultiEdge = multiEdges.hasOwnProperty(linkId);
-    if (isMultiEdge || getLink(fromId, toId)) {
-      if (!isMultiEdge) {
-        multiEdges[linkId] = 0;
-      }
-      linkId += '@' + (++multiEdges[linkId]);
-    }
-
-    var link = new Link(fromId, toId, data, linkId);
+    var link = createLink(fromId, toId, data);
 
     links.push(link);
 
@@ -325,6 +326,24 @@ function createGraph() {
     exitModification();
 
     return link;
+  }
+
+  function createSingleLink(fromId, toId, data) {
+    var linkId = fromId.toString() + toId.toString();
+    return new Link(fromId, toId, data, linkId);
+  }
+
+  function createUniqueLink(fromId, toId, data) {
+    var linkId = fromId.toString() + '👉 ' + toId.toString();
+    var isMultiEdge = multiEdges.hasOwnProperty(linkId);
+    if (isMultiEdge || getLink(fromId, toId)) {
+      if (!isMultiEdge) {
+        multiEdges[linkId] = 0;
+      }
+      linkId += '@' + (++multiEdges[linkId]);
+    }
+
+    return new Link(fromId, toId, data, linkId);
   }
 
   function getLinks(nodeId) {
@@ -370,7 +389,7 @@ function createGraph() {
   }
 
   function getLink(fromNodeId, toNodeId) {
-    // TODO: Use adjacency matrix to speed up this operation.
+    // TODO: Use sorted links to speed this up
     var node = getNode(fromNodeId),
       i;
     if (!node) {
