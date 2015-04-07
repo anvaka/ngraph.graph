@@ -13,8 +13,11 @@
     "url": "https://github.com/anvaka/ngraph.graph.git"
   },
   "keywords": [
+    "graph",
     "ngraph",
-    "ngraphjs"
+    "vivagraph",
+    "ngraphjs",
+    "network"
   ],
   "author": "Andrei Kashcha",
   "license": "BSD-3-Clause",
