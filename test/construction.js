@@ -227,7 +227,7 @@ test('remove link removes it', function(t) {
   t.equal(graph.getLinks(2).length, 0, 'link should be removed from the second node');
   t.ok(linkIsRemoved, 'Link removal is successful');
 
-  graph.forEachLink(function(link) {
+  graph.forEachLink(function() {
     test.ok(false, 'No links should be in graph');
   });
 
@@ -237,7 +237,7 @@ test('remove link removes it', function(t) {
 test('remove link returns false if no link removed', function (t) {
   var graph = createGraph();
 
-  var link = graph.addLink(1, 2);
+  graph.addLink(1, 2);
   var result = graph.removeLink('blah');
   t.notOk(result, 'Link is not removed');
 
@@ -296,10 +296,9 @@ test('remove linked node fires changed event', function(t) {
 });
 
 test('remove node with many links removes them all', function(t) {
-  var graph = createGraph(),
-    link12 = graph.addLink(1, 2),
-    link13 = graph.addLink(1, 3),
-    nodeIdToRemove = 1;
+  var graph = createGraph();
+  graph.addLink(1, 2);
+  graph.addLink(1, 3);
 
   graph.removeNode(1);
 
@@ -307,7 +306,7 @@ test('remove node with many links removes them all', function(t) {
   t.equal(graph.getLinks(1), null, 'link should be removed from the first node');
   t.equal(graph.getLinks(2).length, 0, 'link should be removed from the second node');
   t.equal(graph.getLinks(3).length, 0, 'link should be removed from the third node');
-  graph.forEachLink(function(link) {
+  graph.forEachLink(function() {
     test.ok(false, 'No links should be in graph');
   });
 
