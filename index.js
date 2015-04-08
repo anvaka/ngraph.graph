@@ -226,8 +226,8 @@ function createGraph(options) {
 
     function on() {
       // now it's time to start tracking stuff:
-      enterModification = enterModificationReal;
-      exitModification = exitModificationReal;
+      graphPart.beginUpdate = enterModification = enterModificationReal;
+      graphPart.endUpdate = exitModification = exitModificationReal;
       recordLinkChange = recordLinkChangeReal;
       recordNodeChange = recordNodeChangeReal;
 

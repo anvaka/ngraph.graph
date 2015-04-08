@@ -332,3 +332,17 @@ test('clearGraph clears graph', function (t) {
   t.equal(graph.getLinksCount(), 0, 'No links');
   t.end();
 });
+
+test('beginUpdate holds events', function(t) {
+  var graph = createGraph();
+  var changedCount = 0;
+  graph.on('changed', function () {
+    changedCount += 1;
+  });
+  graph.beginUpdate();
+  graph.addNode(1);
+  t.equals(changedCount, 0, 'Begin update freezes updates until `endUpdate()`');
+  graph.endUpdate();
+  t.equals(changedCount, 1, 'event is fired only after endUpdate()');
+  t.end();
+});
