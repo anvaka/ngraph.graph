@@ -263,13 +263,13 @@ function createGraph(options) {
     if (!node) {
       // TODO: Should I check for 👉  here?
       node = new Node(nodeId);
+      node.data = data;
       nodesCount++;
       recordNodeChange(node, 'add');
     } else {
+      node.data = data;
       recordNodeChange(node, 'update');
     }
-
-    node.data = data;
 
     nodes[nodeId] = node;
 
