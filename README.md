@@ -99,7 +99,7 @@ var world = g.getNode('world'); // returns 'world' node
 console.log(world.id, world.data);
 ```
 
-TO get a particular link object use `getLink()` method:
+To get a particular link object use `getLink()` method:
 
 ``` js
 var helloWorldLink = g.getLink('hello', 'world'); // returns a link from 'hello' to 'world' 
