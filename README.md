@@ -1,7 +1,9 @@
 ngraph.graph
 ============
 
-[Graph](http://en.wikipedia.org/wiki/Graph_\(mathematics\)) data structure for ngraph.\*. Library implements API to modify graph structure and supports event-driven notifications when graph changes.
+[Graph](http://en.wikipedia.org/wiki/Graph_\(mathematics\)) data structure for
+ngraph.\*. Library implements API to modify graph structure and supports event-driven
+notifications when graph changes.
 
 [![build status](https://secure.travis-ci.org/anvaka/ngraph.graph.png)](http://travis-ci.org/anvaka/ngraph.graph)
 
@@ -21,7 +23,9 @@ g.addNode('hello');
 g.addNode('world');
 ```
 
-Now graph `g` contains two nodes: `hello` and `world`. You can also use `addLink()` method to grow a graph. Calling this method with nodes which are not present in the graph creates them:
+Now graph `g` contains two nodes: `hello` and `world`. You can also use `addLink()`
+method to grow a graph. Calling this method with nodes which are not present in
+the graph creates them:
 
 ``` js
 g.addLink('space', 'bar'); // now graph 'g' has two new nodes: 'space' and 'bar'
@@ -30,11 +34,14 @@ g.addLink('space', 'bar'); // now graph 'g' has two new nodes: 'space' and 'bar'
 If nodes already present in the graph 'addLink()' makes them connected:
 
 ``` js
-g.addLink('hello', 'world'); // Only a link between 'hello' and 'bar' is created. No new nodes.
+// Only a link between 'hello' and 'bar' is created. No new nodes.
+g.addLink('hello', 'world');
 ```
 
 ### What to use as nodes and edges?
-The most common and convenient choices are numbers and strings. You can associate arbitrary data with node via optional second argument of `addNode()` method:
+The most common and convenient choices are numbers and strings. You can
+associate arbitrary data with node via optional second argument of `addNode()`
+method:
 
 ``` js
 // Node 'world' is associated with a string object 'custom data'
@@ -51,14 +58,17 @@ var server = g.getNode('server');
 console.log(server.data); // prints associated object
 ```
 
-You can also associate arbitrary object with a link using third optional argument of `addLink()` method:
+You can also associate arbitrary object with a link using third optional
+argument of `addLink()` method:
 
 ``` js
-g.addLink(1, 2, x); // A link between nodes '1' and '2' is now associated with object 'x'
+// A link between nodes '1' and '2' is now associated with object 'x'
+g.addLink(1, 2, x);
 ```
 
 ### Enumerating nodes and links
-After you created a graph one of the most common things to do is to enumerate its nodes/links to perform an operation.
+After you created a graph one of the most common things to do is to enumerate
+its nodes/links to perform an operation.
 
 ``` js
 g.forEachNode(function(node){
@@ -66,7 +76,10 @@ g.forEachNode(function(node){
 });
 ```
 
-The function takes callback which accepts current node. Node object may contain internal information. `node.id` and `node.data` represent parameters passed to the `g.addNode(id, data)` method and they are guaranteed to be present in future versions of the library.
+The function takes callback which accepts current node. Node object may contain
+internal information. `node.id` and `node.data` represent parameters passed to
+the `g.addNode(id, data)` method and they are guaranteed to be present in future
+versions of the library.
 
 To enumerate all links in the graph use `forEachLink()` method:
 
@@ -84,7 +97,8 @@ g.forEachLinkedNode('hello', function(linkedNode, link){
 });
 ```
 
-This method always enumerates both inbound and outbound links. If you want to get only outbound links, pass third optional argument:
+This method always enumerates both inbound and outbound links. If you want to
+get only outbound links, pass third optional argument:
 ``` js
 g.forEachLinkedNode('hello',
     function(linkedNode, link) { /* ... */ },
@@ -102,11 +116,12 @@ console.log(world.id, world.data);
 To get a particular link object use `getLink()` method:
 
 ``` js
-var helloWorldLink = g.getLink('hello', 'world'); // returns a link from 'hello' to 'world' 
+var helloWorldLink = g.getLink('hello', 'world'); // returns a link from 'hello' to 'world'
 console.log(helloWorldLink);
 ```
 
-To remove a node or a link from a graph use `removeNode()` or `removeLink()` correspondingly:
+To remove a node or a link from a graph use `removeNode()` or `removeLink()`
+correspondingly:
 
 ``` js
 g.removeNode('space');
@@ -121,7 +136,6 @@ You can also remove all nodes and links by calling
 ``` js
 g.clear();
 ```
-
 
 ## Listening to Events
 Whenever someone changes your graph you can listen to notifications:
@@ -144,7 +158,8 @@ ChangeRecord = {
 }
 ```
 
-Sometimes it is desirable to react only on bulk changes. ngraph.graph supports this via `beginUpdate()`/`endUpdate()` methods:
+Sometimes it is desirable to react only on bulk changes. ngraph.graph supports
+this via `beginUpdate()`/`endUpdate()` methods:
 
 ``` js
 g.beginUpdate();

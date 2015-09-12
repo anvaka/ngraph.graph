@@ -64,8 +64,6 @@ function createGraph(options) {
      * its data is extended with whatever comes in 'data' argument.
      *
      * @param nodeId the node's identifier. A string or number is preferred.
-     *   note: If you request options.uniqueLinkId, then node id should not
-     *   contain '👉 '. This will break link identifiers
      * @param [data] additional data for the node being added. If node already
      *   exists its data object is augmented with the new one.
      *
@@ -261,7 +259,6 @@ function createGraph(options) {
 
     var node = getNode(nodeId);
     if (!node) {
-      // TODO: Should I check for 👉  here?
       node = new Node(nodeId);
       nodesCount++;
       recordNodeChange(node, 'add');
@@ -289,9 +286,11 @@ function createGraph(options) {
 
     enterModification();
 
-    while (node.links.length) {
-      var link = node.links[0];
-      removeLink(link);
+    if (node.links) {
+      while (node.links.length) {
+        var link = node.links[0];
+        removeLink(link);
+      }
     }
 
     delete nodes[nodeId];
@@ -316,10 +315,10 @@ function createGraph(options) {
     links.push(link);
 
     // TODO: this is not cool. On large graphs potentially would consume more memory.
-    fromNode.links.push(link);
+    addLinkToNode(fromNode, link);
     if (fromId !== toId) {
       // make sure we are not duplicating links for self-loops
-      toNode.links.push(link);
+      addLinkToNode(toNode, link);
     }
 
     recordLinkChange(link, 'add');
@@ -330,18 +329,20 @@ function createGraph(options) {
   }
 
   function createSingleLink(fromId, toId, data) {
-    var linkId = fromId.toString() + toId.toString();
+    var linkId = makeLinkId(fromId, toId);
     return new Link(fromId, toId, data, linkId);
   }
 
   function createUniqueLink(fromId, toId, data) {
-    var linkId = fromId.toString() + '👉 ' + toId.toString();
+    // TODO: Get rid of this method.
+    var linkId = makeLinkId(fromId, toId);
     var isMultiEdge = multiEdges.hasOwnProperty(linkId);
     if (isMultiEdge || getLink(fromId, toId)) {
       if (!isMultiEdge) {
         multiEdges[linkId] = 0;
       }
-      linkId += '@' + (++multiEdges[linkId]);
+      var suffix = '@' + (++multiEdges[linkId]);
+      linkId = makeLinkId(fromId + suffix, toId + suffix);
     }
 
     return new Link(fromId, toId, data, linkId);
@@ -393,7 +394,7 @@ function createGraph(options) {
     // TODO: Use sorted links to speed this up
     var node = getNode(fromNodeId),
       i;
-    if (!node) {
+    if (!node || !node.links) {
       return null;
     }
 
@@ -515,6 +516,8 @@ function createGraph(options) {
 
 // need this for old browsers. Should this be a separate module?
 function indexOfElementInArray(element, array) {
+  if (!array) return -1;
+
   if (array.indexOf) {
     return array.indexOf(element);
   }
@@ -536,10 +539,17 @@ function indexOfElementInArray(element, array) {
  */
 function Node(id) {
   this.id = id;
-  this.links = [];
+  this.links = null;
   this.data = null;
 }
 
+function addLinkToNode(node, link) {
+  if (node.links) {
+    node.links.push(link);
+  } else {
+    node.links = [link];
+  }
+}
 
 /**
  * Internal structure to represent links;
@@ -549,4 +559,19 @@ function Link(fromId, toId, data, id) {
   this.toId = toId;
   this.data = data;
   this.id = id;
+}
+
+function hashCode(str) {
+  var hash = 0, i, chr, len;
+  if (str.length == 0) return hash;
+  for (i = 0, len = str.length; i < len; i++) {
+    chr   = str.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+}
+
+function makeLinkId(fromId, toId) {
+  return hashCode(fromId.toString() + '👉 ' + toId.toString());
 }
