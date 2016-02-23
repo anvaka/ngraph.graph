@@ -392,13 +392,12 @@ function createGraph(options) {
 
   function getLink(fromNodeId, toNodeId) {
     // TODO: Use sorted links to speed this up
-    var node = getNode(fromNodeId),
-      i;
+    var node = getNode(fromNodeId);
     if (!node || !node.links) {
       return null;
     }
 
-    for (i = 0; i < node.links.length; ++i) {
+    for (var i = 0; i < node.links.length; ++i) {
       var link = node.links[i];
       if (link.fromId === fromNodeId && link.toId === toNodeId) {
         return link;
