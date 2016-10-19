@@ -2,6 +2,10 @@
  * @fileOverview Contains definition of the core graph object.
  */
 
+// TODO: need to change storage layer:
+// 1. Be able to get all nodes O(1)
+// 2. Be able to get number of links O(1)
+
 /**
  * @example
  *  var graph = require('ngraph.graph')();
