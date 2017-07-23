@@ -121,14 +121,14 @@ function createGraph(options) {
      *
      * @return number of nodes in the graph.
      */
-    getNodesCount: function() {
+    getNodesCount: function () {
       return nodesCount;
     },
 
     /**
      * Gets total number of links in the graph.
      */
-    getLinksCount: function() {
+    getLinksCount: function () {
       return links.length;
     },
 
@@ -199,6 +199,16 @@ function createGraph(options) {
      * @returns link if there is one. null otherwise.
      */
     hasLink: getLink,
+
+    /**
+     * Detects whether there is a node with given id
+     * 
+     * Operation complexity is O(n1
+     * NOTE: this function is synonim for getNode()
+     *
+     * @returns node if there is one; Falsy value otherwise.
+     */
+    hasNode: getNode,
 
     /**
      * Gets an edge between two nodes.

@@ -15,6 +15,16 @@ test('add node adds node', function(t) {
   t.end();
 });
 
+test('hasNode checks node', function(t) {
+  var graph = createGraph();
+
+  graph.addNode(1);
+
+  t.ok(graph.hasNode(1), 'node is there');
+  t.notOk(graph.hasNode(2), 'should not be here');
+  t.end();
+});
+
 test('hasLink checks links', function (t) {
   var graph = createGraph();
   graph.addLink(1, 2);
