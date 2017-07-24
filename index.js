@@ -203,7 +203,7 @@ function createGraph(options) {
     /**
      * Detects whether there is a node with given id
      * 
-     * Operation complexity is O(n1
+     * Operation complexity is O(1)
      * NOTE: this function is synonim for getNode()
      *
      * @returns node if there is one; Falsy value otherwise.
