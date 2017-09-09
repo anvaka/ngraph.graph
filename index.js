@@ -32,7 +32,7 @@ function createGraph(options) {
       'ngraph.graph: Starting from version 0.14 `uniqueLinkId` is deprecated.\n' +
       'Use `multigraph` option instead\n',
       '\n',
-      'Note: there is also change in default behavior: From now own each graph\n'+
+      'Note: there is also change in default behavior: From now on each graph\n'+
       'is considered to be not a multigraph by default (each edge is unique).'
     );
 
