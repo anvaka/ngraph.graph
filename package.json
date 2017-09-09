@@ -30,7 +30,7 @@
     "istanbul": "^0.3.5",
     "ngraph.generators": "0.0.16",
     "plato": "^1.3.0",
-    "tap": "~0.4.4"
+    "tap": "^10.7.2"
   },
   "dependencies": {
     "ngraph.events": "0.0.3"
