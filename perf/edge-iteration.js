@@ -50,3 +50,4 @@ suite.on('cycle', function(event) {
 })
 // run async
 .run({ 'async': true });
+
