@@ -1,0 +1,11 @@
+Node v7.2.1
+
+> node perf/edge-iteration.js
+Edge iteration x 524 ops/sec ±2.04% (82 runs sampled)
+Edge iteration for multigraph x 464 ops/sec ±2.17% (84 runs sampled)
+
+> node perf/graph-construction.js
+Adding 5,000 edges x 489 ops/sec ±3.74% (88 runs sampled)
+Adding 5,000 multigraph edges x 345 ops/sec ±2.92% (82 runs sampled)
+Adding 5,000 random edges x 162 ops/sec ±3.49% (75 runs sampled)
+Adding 5,000 random edges to multigraph x 144 ops/sec ±3.12% (74 runs sampled)
