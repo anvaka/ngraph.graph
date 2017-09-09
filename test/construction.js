@@ -109,7 +109,7 @@ test('add link adds link', function(t) {
 
 test('it can add multi-edges', function (t) {
   t.plan(5);
-  var graph = createGraph();
+  var graph = createGraph({multigraph: true});
   graph.addLink(1, 2, 'first');
   graph.addLink(1, 2, 'second');
   graph.addLink(1, 2, 'third');
@@ -124,25 +124,27 @@ test('it can add multi-edges', function (t) {
   t.end();
 });
 
-test('it can produce unque link ids', function (t) {
-  t.test('by default links are unique', function (t) {
-    var graph = createGraph();
+test('it can produce unique link ids', function (t) {
+  t.test('by default links are not unique', function (t) {
     var seen = {};
+    var graph = createGraph();
     graph.addLink(1, 2, 'first');
     graph.addLink(1, 2, 'second');
     graph.addLink(1, 2, 'third');
-    graph.forEachLink(verifyLinkIsUnique);
-    t.end();
+    graph.forEachLink(verifyLinksAreNotUnique);
 
-    function verifyLinkIsUnique(link) {
-      t.notOk(seen[link.id], link.id + ' is unique');
-      seen[link.id] = true;
+    var link = graph.getLink(1, 2);
+    t.equals(seen[link.id], 3, 'Link 1->2 seen 3 times')
+
+    function verifyLinksAreNotUnique(link) {
+      seen[link.id] = (seen[link.id] || 0) + 1;
     }
+    t.end();
   });
 
-  t.test('You can also explicitly request unique links', function (t) {
+  t.test('You can create multigraph', function (t) {
     var graph = createGraph({
-      uniqueLinkId: true
+      multigraph: true
     });
 
     var seen = {};
@@ -150,6 +152,7 @@ test('it can produce unque link ids', function (t) {
     graph.addLink(1, 2, 'second');
     graph.addLink(1, 2, 'third');
     graph.forEachLink(verifyLinkIsUnique);
+    t.equals(graph.getLinksCount(), 3, 'All three links are here');
     t.end();
 
     function verifyLinkIsUnique(link) {
@@ -159,9 +162,7 @@ test('it can produce unque link ids', function (t) {
   });
 
   t.test('you can sacrifice uniqueness in favor of performance', function (t) {
-    var graph = createGraph({
-      uniqueLinkId: false
-    });
+    var graph = createGraph({ });
 
     var seen = {};
     graph.addLink(1, 2, 'first');

@@ -27,12 +27,22 @@ function createGraph(options) {
   // array is used to speed up all links enumeration. This is inefficient
   // in terms of memory, but simplifies coding.
   options = options || {};
-  if (options.uniqueLinkId === undefined) {
-    // Request each link id to be unique between same nodes. This negatively
-    // impacts `addLink()` performance (O(n), where n - number of edges of each
-    // vertex), but makes operations with multigraphs more accessible.
-    options.uniqueLinkId = true;
+  if ('uniqueLinkId' in options) {
+    console.warn(
+      'ngraph.graph: Starting from version 0.14 `uniqueLinkId` is deprecated.\n' +
+      'Use `multigraph` option instead\n',
+      '\n',
+      'Note: there is also change in default behavior: From now own each graph\n'+
+      'is considered to be not a multigraph by default (each edge is unique).'
+    );
+
+    options.multigraph = options.uniqueLinkId;
   }
+
+  // Dear reader, the non-multigraphs do not guarantee that there is only
+  // one link for a given pair of node. When this option is set to false
+  // we can save some memory and CPU (18% faster for non-multigraph);
+  if (options.multigraph === undefined) options.multigraph = false;
 
   var nodes = typeof Object.create === 'function' ? Object.create(null) : {},
     links = [],
@@ -42,7 +52,7 @@ function createGraph(options) {
     suspendEvents = 0,
 
     forEachNode = createNodeIterator(),
-    createLink = options.uniqueLinkId ? createUniqueLink : createSingleLink,
+    createLink = options.multigraph ? createUniqueLink : createSingleLink,
 
     // Our graph API provides means to listen to graph changes. Users can subscribe
     // to be notified about changes in the graph by using `on` method. However
@@ -273,14 +283,13 @@ function createGraph(options) {
 
     var node = getNode(nodeId);
     if (!node) {
-      node = new Node(nodeId);
+      node = new Node(nodeId, data);
       nodesCount++;
       recordNodeChange(node, 'add');
     } else {
+      node.data = data;
       recordNodeChange(node, 'update');
     }
-
-    node.data = data;
 
     nodes[nodeId] = node;
 
@@ -300,10 +309,11 @@ function createGraph(options) {
 
     enterModification();
 
-    if (node.links) {
-      while (node.links.length) {
-        var link = node.links[0];
-        removeLink(link);
+    var prevLinks = node.links;
+    if (prevLinks) {
+      node.links = null;
+      for(var i = 0; i < prevLinks.length; ++i) {
+        removeLink(prevLinks[i]);
       }
     }
 
@@ -551,10 +561,10 @@ function indexOfElementInArray(element, array) {
 /**
  * Internal structure to represent node;
  */
-function Node(id) {
+function Node(id, data) {
   this.id = id;
   this.links = null;
-  this.data = null;
+  this.data = data;
 }
 
 function addLinkToNode(node, link) {
@@ -587,5 +597,5 @@ function hashCode(str) {
 }
 
 function makeLinkId(fromId, toId) {
-  return hashCode(fromId.toString() + '👉 ' + toId.toString());
+  return fromId.toString() + '👉 ' + toId.toString();
 }
