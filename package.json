@@ -3,6 +3,10 @@
   "version": "0.0.15",
   "description": "Base graph structure in ngraph.*",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ],
   "scripts": {
     "test": "node node_modules/argg test/*.js",
     "plato": "plato -d reports/plato index.js",
