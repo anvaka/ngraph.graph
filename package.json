@@ -3,7 +3,9 @@
   "version": "0.0.15",
   "description": "Base graph structure in ngraph.*",
   "main": "index.js",
+  "browser": "dist/ngraph.graph.min.js",
   "scripts": {
+    "build": "webpack --mode=production",
     "test": "node node_modules/argg test/*.js",
     "plato": "plato -d reports/plato index.js",
     "cover": "istanbul cover --dir reports/coverage node_modules/argg test/*.js"
@@ -28,9 +30,11 @@
     "argg": "0.0.1",
     "benchmark": "^1.0.0",
     "istanbul": "^0.3.5",
-    "ngraph.generators": "0.0.16",
     "plato": "^1.3.0",
-    "tap": "^10.7.2"
+    "tap": "^10.7.2",
+    "uglifyjs-webpack-plugin": "^2.1.1",
+    "webpack": "^4.29.4",
+    "webpack-cli": "^3.2.3"
   },
   "dependencies": {
     "ngraph.events": "0.0.3"
