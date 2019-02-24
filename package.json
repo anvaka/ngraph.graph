@@ -29,9 +29,9 @@
     "argg": "0.0.1",
     "benchmark": "^1.0.0",
     "browserify": "^16.2.3",
-    "istanbul": "^0.3.5",
+    "istanbul": "^0.4.5",
     "plato": "^1.3.0",
-    "tap": "^10.7.2",
+    "tap": "^12.5.3",
     "uglifyjs": "^2.4.11"
   },
   "dependencies": {
