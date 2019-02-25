@@ -4,7 +4,7 @@
   "description": "Base graph structure in ngraph.*",
   "main": "index.js",
   "scripts": {
-    "build": "browserify index.js -s ngraphGraph -o dist/ngraph.graph.js && uglifyjs dist/ngraph.graph.js -o dist/ngraph.graph.min.js",
+    "build": "browserify index.js -s createGraph -o dist/ngraph.graph.js && uglifyjs dist/ngraph.graph.js -o dist/ngraph.graph.min.js",
     "test": "node node_modules/argg test/*.js",
     "plato": "plato -d reports/plato index.js",
     "cover": "istanbul cover --dir reports/coverage node_modules/argg test/*.js"

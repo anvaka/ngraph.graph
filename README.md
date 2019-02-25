@@ -185,11 +185,11 @@ With [npm](http://npmjs.org) do:
 npm install ngraph.graph
 ```
 
-In a web page, add the following tag:
+Or download from CDN:
 
-```html
-<script src="https://raw.githubusercontent.com/anvaka/ngraph.graph/master/dist/ngraph.graph.min.js"></script>
-```
+<script src='https://unpkg.com/ngraph@0.0.16/dist/ngraph.graph.min.js'></script>
+
+If you download from CDN the library will be available under `createGraph` global name.
 
 License
 =======
