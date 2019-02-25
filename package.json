@@ -1,6 +1,6 @@
 {
   "name": "ngraph.graph",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Base graph structure in ngraph.*",
   "main": "index.js",
   "scripts": {
