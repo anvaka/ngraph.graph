@@ -20,13 +20,8 @@ declare module "ngraph.graph" {
         data: any
     }
 
-    interface Coordinates {
-        x: number,
-        y: number
-    }
-
     interface Graph {
-        addNode: (node: NodeId, nodeCoordinates: Coordinates) => Node
+        addNode: (node: NodeId, data?: any) => Node
         addLink: (from: NodeId, to: NodeId, data?: any) => Link
         removeLink: (link: Link) => boolean
         removeNode: (nodeId: NodeId) => boolean
