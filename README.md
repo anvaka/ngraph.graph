@@ -166,7 +166,7 @@ g.beginUpdate();
 for(var i = 0; i < 100; ++i) {
   g.addLink(i, i + 1); // no events are triggered here
 }
-g.endUpdate(); // this triggers all listners of 'changed' event
+g.endUpdate(); // this triggers all listeners of 'changed' event
 ```
 
 If you want to stop listen to events use `off()` method:
