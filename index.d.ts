@@ -7,39 +7,39 @@ declare module "ngraph.graph" {
 
     type NodeId = string | number
 
-    interface Link {
+    interface Link<Data = any> {
         id: string,
         fromId: NodeId,
         toId: NodeId,
-        data: any
+        data: Data
     }
 
-    interface Node {
+    interface Node<Data = any> {
         id: NodeId,
         links: Link[],
-        data: any
+        data: Data
     }
 
-    interface Graph {
-        addNode: (node: NodeId, data?: any) => Node
-        addLink: (from: NodeId, to: NodeId, data?: any) => Link
-        removeLink: (link: Link) => boolean
+    interface Graph<NodeData = any, LinkData = any> {
+        addNode: (node: NodeId, data?: NodeData) => Node<NodeData>
+        addLink: (from: NodeId, to: NodeId, data?: LinkData) => Link<LinkData>
+        removeLink: (link: Link<LinkData>) => boolean
         removeNode: (nodeId: NodeId) => boolean
-        getNode: (nodeId: NodeId) => Node | undefined
-        hasNode: (nodeId: NodeId) => Node | undefined
-        getLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link | null
-        hasLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link | null
+        getNode: (nodeId: NodeId) => Node<NodeData> | undefined
+        hasNode: (nodeId: NodeId) => Node<NodeData> | undefined
+        getLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link<LinkData> | null
+        hasLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link<LinkData> | null
         getNodesCount: () => number
         getLinksCount: () => number
-        getLinks: Link[]
-        forEachNode: (callbackPerNode: (node: Node) => void) => void
-        forEachLinkedNode: (nodeId: NodeId, callbackPerNode: (node: Node, link: Link) => void, oriented: boolean) => void
-        forEachLink: (callbackPerLink: (link: Link) => void) => void
+        getLinks: Link<LinkData>[]
+        forEachNode: (callbackPerNode: (node: Node<NodeData>) => void) => void
+        forEachLinkedNode: (nodeId: NodeId, callbackPerNode: (node: Node<NodeData>, link: Link<LinkData>) => void, oriented: boolean) => void
+        forEachLink: (callbackPerLink: (link: Link<LinkData>) => void) => void
         beginUpdate: () => void
         endUpdate: () => void
         clear: () => void
     }
 
-    export default function createGraph(options?: { multigraph: boolean }): Graph
+    export default function createGraph<NodeData = any, LinkData = any>(options?: { multigraph: boolean }): Graph<NodeData, LinkData>
 
 }
