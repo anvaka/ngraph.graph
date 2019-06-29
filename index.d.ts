@@ -1,4 +1,4 @@
-// Type definitions for ngraph.graph v0.0.14
+// Type definitions for ngraph.graph v18.0.0
 // Project: https://github.com/anvaka/ngraph.graph
 // Definitions by: Nathan Westlake <https://github.com/CorayThan>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
