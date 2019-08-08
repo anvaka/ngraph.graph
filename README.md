@@ -34,7 +34,7 @@ g.addLink('space', 'bar'); // now graph 'g' has two new nodes: 'space' and 'bar'
 If nodes already present in the graph 'addLink()' makes them connected:
 
 ``` js
-// Only a link between 'hello' and 'bar' is created. No new nodes.
+// Only a link between 'hello' and 'world' is created. No new nodes.
 g.addLink('hello', 'world');
 ```
 
