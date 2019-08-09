@@ -12,6 +12,7 @@ logs
 results
 reports
 .nyc_output
+.vscode
 
 npm-debug.log
 node_modules
