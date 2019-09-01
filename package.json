@@ -13,10 +13,15 @@
   },
   "keywords": [
     "graph",
+    "graph theory",
+    "edge",
+    "vertex",
+    "node",
+    "network",
+    "connection",
     "ngraph",
     "vivagraph",
-    "ngraphjs",
-    "network"
+    "ngraphjs"
   ],
   "author": "Andrei Kashcha",
   "license": "BSD-3-Clause",
