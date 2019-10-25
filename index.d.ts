@@ -31,7 +31,7 @@ declare module "ngraph.graph" {
         hasLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link<LinkData> | null
         getNodesCount: () => number
         getLinksCount: () => number
-        getLinks: Link<LinkData>[]
+        getLinks: (nodeId: NodeId) => Link<LinkData>[] | null
         forEachNode: (callbackPerNode: (node: Node<NodeData>) => boolean) => void
         forEachLinkedNode: (nodeId: NodeId, callbackPerNode: (node: Node<NodeData>, link: Link<LinkData>) => void, oriented: boolean) => void
         forEachLink: (callbackPerLink: (link: Link<LinkData>) => void) => void
