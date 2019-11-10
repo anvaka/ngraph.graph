@@ -1,15 +1,20 @@
-Node v7.2.1
+Node v12.4.0
 
 > node perf/edge-iteration.js
-Edge iteration x 524 ops/sec ±2.04% (82 runs sampled)
-Edge iteration for multigraph x 464 ops/sec ±2.17% (84 runs sampled)
+Edge iteration x 626 ops/sec ±1.36% (86 runs sampled)
+Edge iteration for multigraph x 568 ops/sec ±0.97% (87 runs sampled)
 
 » node perf/graph-construction.js
-Adding 5,000 edges x 201 ops/sec ±4.84% (59 runs sampled)
-Adding 5,000 multigraph edges x 172 ops/sec ±4.59% (69 runs sampled)
-Adding 5,000 random edges x 135 ops/sec ±3.55% (70 runs sampled)
-Adding 5,000 random edges to multigraph x 115 ops/sec ±3.74% (73 runs sampled)
-Adding 5,000 random edges and randomly removing them x 7.44 ops/sec ±3.22% (23 runs sampled)
-Adding 5,000 random edges to multigraph and randomly removing them x 5.62 ops/sec ±4.80% (18 runs sampled)
-Removing all edges one by one from 5k graph x 108 ops/sec ±3.61% (68 runs sampled)
-Removing all edges one by one from 5k multigraph graph x 93.03 ops/sec ±2.93% (68 runs sampled)
+Adding 5,000 edges x 580 ops/sec ±1.40% (86 runs sampled)
+Adding 5,000 multigraph edges x 432 ops/sec ±1.08% (82 runs sampled)
+Adding 5,000 random edges x 219 ops/sec ±0.92% (81 runs sampled)
+Adding 5,000 random edges to multigraph x 179 ops/sec ±0.93% (78 runs sampled)
+Adding 5,000 random edges and randomly removing them x 7.83 ops/sec ±4.33% (24 runs sampled)
+Adding 5,000 random edges to multigraph and randomly removing them x 5.97 ops/sec ±4.07% (20 runs sampled)
+Removing all edges one by one from 5k graph x 126 ops/sec ±1.20% (76 runs sampled)
+Removing all edges one by one from 5k multigraph graph x 97.78 ops/sec ±4.15% (69 runs sampled)
+
+» node perf/node-iteration.js
+graphWithOutMap x 572 ops/sec ±3.64% (71 runs sampled)
+graphWithMap x 5,744 ops/sec ±6.48% (69 runs sampled)
+Fastest is graphWithMap

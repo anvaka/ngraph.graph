@@ -17,21 +17,28 @@ var sum2 = 0;
 
 // add tests
 suite.add('graphWithOutMap', function() {
+  var localSum = 0;
   graphWithOutMap.forEachNode(function (node) {
-    sum1 += node.data;
+    localSum += node.data;
   });
+  sum1 = localSum;
 })
 .add('graphWithMap', function() {
+  var localSum = 0;
   graphWithMap.forEachNode(function (node) {
-    sum2 += node.data;
+    localSum += node.data;
   });
+  sum2 = localSum;
 })
 .on('cycle', function(event) {
   console.log(String(event.target));
 })
 .on('complete', function() {
+   if (sum1 !== sum2) {
+     throw new Error('Invalid test')
+   }
+
    console.log('Fastest is ' + this.filter('fastest').map("name"));
-//    console.log(sum1, sum2);
 })
 // run async
 .run({ 'async': true });
