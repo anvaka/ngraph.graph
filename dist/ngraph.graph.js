@@ -45,14 +45,17 @@ function createGraph(options) {
   // we can save some memory and CPU (18% faster for non-multigraph);
   if (options.multigraph === undefined) options.multigraph = false;
 
-  var nodes = typeof Object.create === 'function' ? Object.create(null) : {},
-    links = [],
+  if (typeof Map !== 'function') {
+    // TODO: Should we polyfill it ourselves? We don't use much operations there..
+    throw new Error('ngraph.graph requires `Map` to be defined. Please polyfill it before using ngraph');
+  } 
+
+  var nodes = new Map();
+  var links = [],
     // Hash of multi-edges. Used to track ids of edges between same nodes
     multiEdges = {},
-    nodesCount = 0,
     suspendEvents = 0,
 
-    forEachNode = createNodeIterator(),
     createLink = options.multigraph ? createUniqueLink : createSingleLink,
 
     // Our graph API provides means to listen to graph changes. Users can subscribe
@@ -133,7 +136,7 @@ function createGraph(options) {
      * @return number of nodes in the graph.
      */
     getNodesCount: function () {
-      return nodesCount;
+      return nodes.size;
     },
 
     /**
@@ -285,21 +288,20 @@ function createGraph(options) {
     var node = getNode(nodeId);
     if (!node) {
       node = new Node(nodeId, data);
-      nodesCount++;
       recordNodeChange(node, 'add');
     } else {
       node.data = data;
       recordNodeChange(node, 'update');
     }
 
-    nodes[nodeId] = node;
+    nodes.set(nodeId, node);
 
     exitModification();
     return node;
   }
 
   function getNode(nodeId) {
-    return nodes[nodeId];
+    return nodes.get(nodeId);
   }
 
   function removeNode(nodeId) {
@@ -318,8 +320,7 @@ function createGraph(options) {
       }
     }
 
-    delete nodes[nodeId];
-    nodesCount--;
+    nodes.delete(nodeId)
 
     recordNodeChange(node, 'remove');
 
@@ -468,7 +469,7 @@ function createGraph(options) {
       var link = links[i];
       var linkedNodeId = link.fromId === nodeId ? link.toId : link.fromId;
 
-      quitFast = callback(nodes[linkedNodeId], link);
+      quitFast = callback(nodes.get(linkedNodeId), link);
       if (quitFast) {
         return true; // Client does not need more iterations. Break now.
       }
@@ -480,7 +481,7 @@ function createGraph(options) {
     for (var i = 0; i < links.length; ++i) {
       var link = links[i];
       if (link.fromId === nodeId) {
-        quitFast = callback(nodes[link.toId], link);
+        quitFast = callback(nodes.get(link.toId), link)
         if (quitFast) {
           return true; // Client does not need more iterations. Break now.
         }
@@ -505,36 +506,18 @@ function createGraph(options) {
     }
   }
 
-  function createNodeIterator() {
-    // Object.keys iterator is 1.3x faster than `for in` loop.
-    // See `https://github.com/anvaka/ngraph.graph/tree/bench-for-in-vs-obj-keys`
-    // branch for perf test
-    return Object.keys ? objectKeysIterator : forInIterator;
-  }
-
-  function objectKeysIterator(callback) {
+  function forEachNode(callback) {
     if (typeof callback !== 'function') {
-      return;
+      throw new Error('Function is expected to iterate over graph nodes. You passed ' + callback);
     }
 
-    var keys = Object.keys(nodes);
-    for (var i = 0; i < keys.length; ++i) {
-      if (callback(nodes[keys[i]])) {
+    var valuesIterator = nodes.values();
+    var nextValue = valuesIterator.next();
+    while (!nextValue.done) {
+      if (callback(nextValue.value)) {
         return true; // client doesn't want to proceed. Return.
       }
-    }
-  }
-
-  function forInIterator(callback) {
-    if (typeof callback !== 'function') {
-      return;
-    }
-    var node;
-
-    for (node in nodes) {
-      if (callback(nodes[node])) {
-        return true; // client doesn't want to proceed. Return.
-      }
+      nextValue = valuesIterator.next();
     }
   }
 }
@@ -584,17 +567,6 @@ function Link(fromId, toId, data, id) {
   this.toId = toId;
   this.data = data;
   this.id = id;
-}
-
-function hashCode(str) {
-  var hash = 0, i, chr, len;
-  if (str.length == 0) return hash;
-  for (i = 0, len = str.length; i < len; i++) {
-    chr   = str.charCodeAt(i);
-    hash  = ((hash << 5) - hash) + chr;
-    hash |= 0; // Convert to 32bit integer
-  }
-  return hash;
 }
 
 function makeLinkId(fromId, toId) {
