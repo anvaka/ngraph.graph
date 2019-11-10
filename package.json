@@ -29,8 +29,10 @@
     "url": "https://github.com/anvaka/ngraph.graph/issues"
   },
   "devDependencies": {
+    "benchmark": "^2.1.4",
     "browserify": "^16.4.0",
-    "tap": "^14.6.1",
+    "ngraph.random": "^1.0.0",
+    "tap": "^14.9.2",
     "uglify-js": "^3.6.0"
   },
   "dependencies": {
