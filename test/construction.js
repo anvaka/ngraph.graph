@@ -87,7 +87,7 @@ test('it can add node with id similar to reserved prototype property', function(
 
   t.ok(graph.hasLink('watch', 'constructor'));
   t.equals(graph.getLinksCount(), 1, 'one link');
-  t.equal(iterated, 2, 'has two nodes');
+  t.equals(iterated, 2, 'has two nodes');
   t.end();
 });
 

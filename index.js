@@ -44,8 +44,18 @@ function createGraph(options) {
   // we can save some memory and CPU (18% faster for non-multigraph);
   if (options.multigraph === undefined) options.multigraph = false;
 
-  var nodes = typeof Object.create === 'function' ? Object.create(null) : {},
-    links = [],
+  // uses a Map instead of an Object
+  if (options.useMap) {
+    if (typeof Map === "function") {
+      var nodes = new Map();
+    } else {
+      console.error("Can not use map, your browser dosent support it.");
+      return false;
+    }
+  } else {
+    var nodes = typeof Object.create === 'function' ? Object.create(null) : {}
+  }
+  var links = [],
     // Hash of multi-edges. Used to track ids of edges between same nodes
     multiEdges = {},
     nodesCount = 0,
@@ -291,14 +301,22 @@ function createGraph(options) {
       recordNodeChange(node, 'update');
     }
 
-    nodes[nodeId] = node;
+    if (options.useMap) {
+      nodes.set(nodeId, node);
+    } else {
+      nodes[nodeId] = node;
+    }
 
     exitModification();
     return node;
   }
 
   function getNode(nodeId) {
-    return nodes[nodeId];
+    if (options.useMap) {
+      return nodes.get(nodeId);
+    } else {
+      return nodes[nodeId];
+    }
   }
 
   function removeNode(nodeId) {
@@ -316,8 +334,11 @@ function createGraph(options) {
         removeLink(prevLinks[i]);
       }
     }
-
-    delete nodes[nodeId];
+    if (options.useMap) {
+      nodes.delete(nodeId)
+    } else {
+      delete nodes[nodeId];
+    }
     nodesCount--;
 
     recordNodeChange(node, 'remove');
@@ -467,7 +488,11 @@ function createGraph(options) {
       var link = links[i];
       var linkedNodeId = link.fromId === nodeId ? link.toId : link.fromId;
 
-      quitFast = callback(nodes[linkedNodeId], link);
+      if (options.useMap) {
+        quitFast = callback(nodes.get(linkedNodeId), link);
+      } else {
+        quitFast = callback(nodes[linkedNodeId], link);
+      }
       if (quitFast) {
         return true; // Client does not need more iterations. Break now.
       }
@@ -479,7 +504,11 @@ function createGraph(options) {
     for (var i = 0; i < links.length; ++i) {
       var link = links[i];
       if (link.fromId === nodeId) {
-        quitFast = callback(nodes[link.toId], link);
+        if (options.useMap) {
+          quitFast = callback(nodes.get(link.toId), link)
+        } else {
+          quitFast = callback(nodes[link.toId], link);
+        }
         if (quitFast) {
           return true; // Client does not need more iterations. Break now.
         }
@@ -508,7 +537,24 @@ function createGraph(options) {
     // Object.keys iterator is 1.3x faster than `for in` loop.
     // See `https://github.com/anvaka/ngraph.graph/tree/bench-for-in-vs-obj-keys`
     // branch for perf test
-    return Object.keys ? objectKeysIterator : forInIterator;
+    // map is even faster then Object.keys
+    if (options.useMap) {
+      return mapIterator
+    } else {
+      return Object.keys ? objectKeysIterator : forInIterator;
+    }
+  }
+
+  function mapIterator(callback) {
+    if (typeof callback !== 'function') {
+      return;
+    }
+
+    for (let [nodeId, node] of nodes) {
+      if (callback(node)) {
+        return true; // client doesn't want to proceed. Return.
+      }
+    }
   }
 
   function objectKeysIterator(callback) {
