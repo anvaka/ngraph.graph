@@ -47,7 +47,10 @@ function createGraph(options) {
   if (typeof Map !== 'function') {
     // TODO: Should we polyfill it ourselves? We don't use much operations there..
     throw new Error('ngraph.graph requires `Map` to be defined. Please polyfill it before using ngraph');
-  } 
+  }
+
+  // Sets the default for if functions should be oriented or not.
+  if (options.oriented === undefined) options.oriented = false;
 
   var nodes = new Map();
   var links = [],
@@ -171,6 +174,7 @@ function createGraph(options) {
      * @param {Function(node, link)} callback Function to be called on all linked nodes.
      *   The function is passed two parameters: adjacent node and link object itself.
      * @param oriented if true graph treated as oriented.
+     *   Default to options.oriented.
      */
     forEachLinkedNode: forEachLinkedNode,
 
@@ -229,6 +233,8 @@ function createGraph(options) {
      *
      * @param {string} fromId link start identifier
      * @param {string} toId link end identifier
+     * @param {boolean} oriented if true graph treated as oriented.
+     *   Default to options.oriented.
      *
      * @returns link if there is one. null otherwise.
      */
@@ -415,7 +421,7 @@ function createGraph(options) {
     return true;
   }
 
-  function getLink(fromNodeId, toNodeId) {
+  function getLink(fromNodeId, toNodeId, oriented=options.oriented) {
     // TODO: Use sorted links to speed this up
     var node = getNode(fromNodeId),
       i;
@@ -425,7 +431,9 @@ function createGraph(options) {
 
     for (i = 0; i < node.links.length; ++i) {
       var link = node.links[i];
-      if (link.fromId === fromNodeId && link.toId === toNodeId) {
+      if (link.fromId === fromNodeId && link.toId === toNodeId
+          || oriented && link.fromId === toNodeId && link.toId === fromNodeId
+        ) {
         return link;
       }
     }
@@ -450,7 +458,7 @@ function createGraph(options) {
     }
   }
 
-  function forEachLinkedNode(nodeId, callback, oriented) {
+  function forEachLinkedNode(nodeId, callback, oriented=options.oriented) {
     var node = getNode(nodeId);
 
     if (node && node.links && typeof callback === 'function') {
