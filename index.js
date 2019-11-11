@@ -50,7 +50,7 @@ function createGraph(options) {
   }
 
   // Sets the default for if functions should be oriented or not.
-  if (options.oriented === undefined) options.oriented = false;
+  if (options.oriented === undefined) options.oriented = true;
 
   var nodes = new Map();
   var links = [],
@@ -432,7 +432,7 @@ function createGraph(options) {
     for (i = 0; i < node.links.length; ++i) {
       var link = node.links[i];
       if (link.fromId === fromNodeId && link.toId === toNodeId
-          || oriented && link.fromId === toNodeId && link.toId === fromNodeId
+          || !oriented && link.fromId === toNodeId && link.toId === fromNodeId
         ) {
         return link;
       }

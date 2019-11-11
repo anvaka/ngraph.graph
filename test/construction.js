@@ -1,6 +1,52 @@
 var test = require('tap').test,
   createGraph = require('..');
 
+test('getLink respects orientation', function(t) {
+  var graph = createGraph();
+  
+  var data = '413'
+
+  graph.addLink(1, 2, data)
+
+  t.equal( graph.getLink(1, 2).data, data, "should get the link")
+  t.notOk( graph.getLink(2, 1), "should not get the link")
+
+  t.equal( graph.getLink(1, 2, false).data, data, "should get the link")
+  t.equal( graph.getLink(2, 1, false).data, data, "should get the link")
+  
+  t.end()
+})
+
+test('createGraph uses orientation option', function(t) {
+  var orientatedGraph = createGraph({oriented: true});
+  var nonorientatedGraph = createGraph({oriented: false});
+
+  var data1 = "42"
+  var data2 = "2001"
+
+  orientatedGraph.addLink(1, 2, data1)
+  orientatedGraph.addLink(2, 3, data1)
+
+  nonorientatedGraph.addLink(1, 2, data1)
+  nonorientatedGraph.addLink(2, 3, data1)
+
+  t.equal( orientatedGraph.getLink(1, 2).data, data1, "should get the link")
+  t.notOk( orientatedGraph.getLink(2, 1), "should not get the link")
+
+  t.equal( nonorientatedGraph.getLink(1, 2).data, data1, "should get the link")
+  t.equal( nonorientatedGraph.getLink(2, 1).data, data1, "should get the link")
+
+  orientatedGraph.forEachLinkedNode(2, function(node, link) {
+    t.ok(link.toId === 3, 'Only 3 is connected to node 2, when traversal is oriented');
+  });
+
+  nonorientatedGraph.forEachLinkedNode(2, function(node, link) {
+    t.ok(link.toId === 3 || link.toId === 2, 'both incoming and outgoing links are visited');
+  });
+
+  t.end();
+})
+
 test('add node adds node', function(t) {
   var graph = createGraph();
   var customData = '31337';
