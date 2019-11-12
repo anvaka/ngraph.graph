@@ -7,6 +7,7 @@ lib-cov
 *.pid
 *.gz
 
+coverage
 pids
 logs
 results

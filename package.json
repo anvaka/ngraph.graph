@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "browserify index.js -s createGraph -o dist/ngraph.graph.js && uglifyjs dist/ngraph.graph.js -o dist/ngraph.graph.min.js",
-    "test": "tap test/*.js"
+    "test": "tap test/*.js",
+    "cover": "tap  --coverage-report=html --no-browser test/*.js"
   },
   "repository": {
     "type": "git",
