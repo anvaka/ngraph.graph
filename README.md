@@ -2,8 +2,7 @@ ngraph.graph
 ============
 
 [Graph](http://en.wikipedia.org/wiki/Graph_\(mathematics\)) data structure for
-ngraph.\*. Library implements API to modify graph structure and supports event-driven
-notifications when graph changes.
+javascript. This library belongs to a family of javascript graph packages called [ngraph](https://github.com/anvaka/ngraph).
 
 [![build status](https://secure.travis-ci.org/anvaka/ngraph.graph.png)](http://travis-ci.org/anvaka/ngraph.graph)
 
