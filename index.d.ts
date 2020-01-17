@@ -4,7 +4,7 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 declare module "ngraph.graph" {
-
+    import { EventedType } from 'ngraph.events'
     type NodeId = string | number
 
     interface Link<Data = any> {
@@ -41,6 +41,6 @@ declare module "ngraph.graph" {
         clear: () => void
     }
 
-    export default function createGraph<NodeData = any, LinkData = any>(options?: { multigraph: boolean }): Graph<NodeData, LinkData>
+    export default function createGraph<NodeData = any, LinkData = any>(options?: { multigraph: boolean }): Graph<NodeData, LinkData> & EventedType
 
 }
