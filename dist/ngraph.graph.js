@@ -574,7 +574,7 @@ function makeLinkId(fromId, toId) {
 }
 
 },{"ngraph.events":2}],2:[function(require,module,exports){
-module.exports = function(subject) {
+module.exports = function eventify(subject) {
   validateSubject(subject);
 
   var eventsStorage = createEventsStorage(subject);

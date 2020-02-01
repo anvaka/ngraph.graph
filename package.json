@@ -3,6 +3,8 @@
   "version": "19.0.2",
   "description": "graph data structure",
   "main": "index.js",
+  "jsdelivr": "dist/ngraph.graph.min.js",
+  "unpkg": "dist/ngraph.graph.min.js",
   "scripts": {
     "build": "browserify index.js -s createGraph -o dist/ngraph.graph.js && uglifyjs dist/ngraph.graph.js -o dist/ngraph.graph.min.js",
     "test": "tap test/*.js",
