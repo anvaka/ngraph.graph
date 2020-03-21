@@ -134,16 +134,22 @@ function createGraph(options) {
      *
      * @return number of nodes in the graph.
      */
-    getNodesCount: function () {
-      return nodes.size;
-    },
+    getNodeCount: getNodeCount,
 
     /**
      * Gets total number of links in the graph.
      */
-    getLinksCount: function () {
-      return links.length;
-    },
+    getLinkCount: getLinkCount,
+
+    /**
+     * Synonym for `getLinkCount()`
+     */
+    getLinksCount: getLinkCount,
+    
+    /**
+     * Synonym for `getNodeCount()`
+     */
+    getNodesCount: getNodeCount,
 
     /**
      * Gets all links (inbound and outbound) from the node with given id.
@@ -371,6 +377,14 @@ function createGraph(options) {
     }
 
     return new Link(fromId, toId, data, linkId);
+  }
+
+  function getNodeCount() {
+    return nodes.size;
+  }
+
+  function getLinkCount() {
+    return links.length;
   }
 
   function getLinks(nodeId) {

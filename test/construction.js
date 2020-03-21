@@ -224,6 +224,20 @@ test('remove isolated node remove it', function(t) {
   t.end();
 });
 
+test('supports plural methods', function(t) {
+  var graph = createGraph();
+
+  graph.addLink(1, 2);
+
+  t.equal(graph.getNodeCount(), 2, 'two nodes are there');
+  t.equal(graph.getLinkCount(), 1, 'two nodes are there');
+
+  t.equal(graph.getNodesCount(), 2, 'two nodes are there');
+  t.equal(graph.getLinksCount(), 1, 'two nodes are there');
+
+  t.end();
+});
+
 test('remove link removes it', function(t) {
   t.plan(5);
 
