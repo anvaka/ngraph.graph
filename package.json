@@ -33,12 +33,12 @@
   },
   "devDependencies": {
     "benchmark": "^2.1.4",
-    "browserify": "^16.4.0",
+    "browserify": "^16.5.0",
     "ngraph.random": "^1.0.0",
-    "tap": "^14.9.2",
-    "uglify-js": "^3.6.0"
+    "tap": "^14.10.7",
+    "uglify-js": "^3.8.0"
   },
   "dependencies": {
-    "ngraph.events": "^1.2.0"
+    "ngraph.events": "^1.2.1"
   }
 }
