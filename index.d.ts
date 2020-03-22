@@ -31,6 +31,8 @@ declare module "ngraph.graph" {
         hasLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link<LinkData> | null
         getNodesCount: () => number
         getLinksCount: () => number
+        getNodeCount: () => number
+        getLinkCount: () => number
         getLinks: (nodeId: NodeId) => Link<LinkData>[] | null
         /** To stop the iteration return true in the callback */
         forEachNode: (callbackPerNode: (node: Node<NodeData>) => void | undefined | null | boolean) => void
