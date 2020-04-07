@@ -5,22 +5,24 @@
 
 declare module "ngraph.graph" {
     import { EventedType } from 'ngraph.events'
-    type NodeId = string | number
+    
+    export type NodeId = string | number
+    export type LinkId = string
 
-    interface Link<Data = any> {
-        id: string,
+    export interface Link<Data = any> {
+        id: LinkId,
         fromId: NodeId,
         toId: NodeId,
         data: Data
     }
 
-    interface Node<Data = any> {
+    export interface Node<Data = any> {
         id: NodeId,
         links: Link[],
         data: Data
     }
 
-    interface Graph<NodeData = any, LinkData = any> {
+    export interface Graph<NodeData = any, LinkData = any> {
         addNode: (node: NodeId, data?: NodeData) => Node<NodeData>
         addLink: (from: NodeId, to: NodeId, data?: LinkData) => Link<LinkData>
         removeLink: (link: Link<LinkData>) => boolean
