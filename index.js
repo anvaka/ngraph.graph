@@ -142,6 +142,11 @@ function createGraph(options) {
     getLinkCount: getLinkCount,
 
     /**
+     * Gets total number of links in the graph.
+     */
+    getEdgeCount: getLinkCount,
+
+    /**
      * Synonym for `getLinkCount()`
      */
     getLinksCount: getLinkCount,
