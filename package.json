@@ -33,10 +33,10 @@
   },
   "devDependencies": {
     "benchmark": "^2.1.4",
-    "browserify": "^16.5.0",
+    "browserify": "^16.5.1",
     "ngraph.random": "^1.0.0",
-    "tap": "^14.10.7",
-    "uglify-js": "^3.8.0"
+    "tap": "^14.10.8",
+    "uglify-js": "^3.10.0"
   },
   "dependencies": {
     "ngraph.events": "^1.2.1"
