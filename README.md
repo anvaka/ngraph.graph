@@ -6,6 +6,23 @@ javascript. This library belongs to a family of javascript graph packages called
 
 [![build status](https://secure.travis-ci.org/anvaka/ngraph.graph.png)](http://travis-ci.org/anvaka/ngraph.graph)
 
+Install
+=======
+
+With [npm](http://npmjs.org) do:
+
+```
+npm install ngraph.graph
+```
+
+Or download from CDN:
+
+``` html
+<script src='https://unpkg.com/ngraph.graph@19.0.0/dist/ngraph.graph.min.js'></script>
+```
+
+If you download from CDN the library will be available under `createGraph` global name.
+
 ## Creating a graph
 Create a graph with no edges and no nodes:
 
@@ -175,22 +192,6 @@ g.off('changed', yourHandler); // no longer interested in changes from graph
 
 For more information about events, please follow to [ngraph.events](https://github.com/anvaka/ngraph.events)
 
-Install
-=======
-
-With [npm](http://npmjs.org) do:
-
-```
-npm install ngraph.graph
-```
-
-Or download from CDN:
-
-``` html
-<script src='https://unpkg.com/ngraph.graph@19.0.0/dist/ngraph.graph.min.js'></script>
-```
-
-If you download from CDN the library will be available under `createGraph` global name.
 
 License
 =======
