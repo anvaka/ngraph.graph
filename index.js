@@ -330,7 +330,7 @@ function createGraph(options) {
       }
     }
 
-    nodes.delete(nodeId)
+    nodes.delete(nodeId);
 
     recordNodeChange(node, 'remove');
 
@@ -499,7 +499,7 @@ function createGraph(options) {
     for (var i = 0; i < links.length; ++i) {
       var link = links[i];
       if (link.fromId === nodeId) {
-        quitFast = callback(nodes.get(link.toId), link)
+        quitFast = callback(nodes.get(link.toId), link);
         if (quitFast) {
           return true; // Client does not need more iterations. Break now.
         }

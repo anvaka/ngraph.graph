@@ -125,6 +125,7 @@ test('it can add multi-edges', function (t) {
 });
 
 test('it can produce unique link ids', function (t) {
+  // eslint-disable-next-line no-shadow
   t.test('by default links are not unique', function (t) {
     var seen = {};
     var graph = createGraph();
@@ -134,14 +135,16 @@ test('it can produce unique link ids', function (t) {
     graph.forEachLink(verifyLinksAreNotUnique);
 
     var link = graph.getLink(1, 2);
-    t.equals(seen[link.id], 3, 'Link 1->2 seen 3 times')
+    t.equals(seen[link.id], 3, 'Link 1->2 seen 3 times');
 
+    // eslint-disable-next-line no-shadow
     function verifyLinksAreNotUnique(link) {
       seen[link.id] = (seen[link.id] || 0) + 1;
     }
     t.end();
   });
 
+  // eslint-disable-next-line no-shadow
   t.test('You can create multigraph', function (t) {
     var graph = createGraph({
       multigraph: true
@@ -161,6 +164,7 @@ test('it can produce unique link ids', function (t) {
     }
   });
 
+  // eslint-disable-next-line no-shadow
   t.test('you can sacrifice uniqueness in favor of performance', function (t) {
     var graph = createGraph({ });
 

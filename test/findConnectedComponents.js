@@ -16,10 +16,10 @@ test('can find connected components', function(t) {
   // lets verify it:
   var components = findConnectedComponents(graph);
   t.equal(components.length, 4, 'all components found');
-  t.deepEqual(components[0], [1, 2, 3], 'first component found')
-  t.deepEqual(components[1], [5, 6], 'second component found')
-  t.deepEqual(components[2], [8], 'third component found')
-  t.deepEqual(components[3], [9], 'fourth component found')
+  t.deepEqual(components[0], [1, 2, 3], 'first component found');
+  t.deepEqual(components[1], [5, 6], 'second component found');
+  t.deepEqual(components[2], [8], 'third component found');
+  t.deepEqual(components[3], [9], 'fourth component found');
 
   t.end();
 });

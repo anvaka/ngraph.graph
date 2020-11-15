@@ -22,7 +22,7 @@ module.exports = function findConnectedComponents(graph) {
 
     // Let's find what other nodes belong to this component
     dfs(graph, node.id, otherNode => {
-      let componentId = nodeIdToComponentId.get(otherNode.id)
+      let componentId = nodeIdToComponentId.get(otherNode.id);
       if (componentId !== undefined && componentId === lastComponentId) {
         // this is possible when we have a loop. Just ignore the node.
         return false;
@@ -40,7 +40,7 @@ module.exports = function findConnectedComponents(graph) {
   });
 
   return connectedComponents;
-}
+};
 
 function dfs(graph, startFromNodeId, visitor) {
   graph.forEachLinkedNode(startFromNodeId, function(otherNode) {
