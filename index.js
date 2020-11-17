@@ -481,6 +481,7 @@ function createGraph(options) {
     }
   }
 
+  // eslint-disable-next-line no-shadow
   function forEachNonOrientedLink(links, nodeId, callback) {
     var quitFast;
     for (var i = 0; i < links.length; ++i) {
@@ -494,6 +495,7 @@ function createGraph(options) {
     }
   }
 
+  // eslint-disable-next-line no-shadow
   function forEachOrientedLink(links, nodeId, callback) {
     var quitFast;
     for (var i = 0; i < links.length; ++i) {

@@ -34,6 +34,7 @@
   "devDependencies": {
     "benchmark": "^2.1.4",
     "browserify": "^16.5.1",
+    "eslint": "^7.13.0",
     "ngraph.random": "^1.0.0",
     "tap": "^14.10.8",
     "uglify-js": "^3.10.0"

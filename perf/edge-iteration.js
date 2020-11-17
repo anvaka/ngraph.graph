@@ -1,5 +1,5 @@
 var createGraph = require('../');
-var randomAPI = require('ngraph.random').random
+var randomAPI = require('ngraph.random').random;
 var Benchmark = require('benchmark');
 var suite = new Benchmark.Suite;
 
