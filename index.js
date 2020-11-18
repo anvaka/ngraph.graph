@@ -218,7 +218,7 @@ function createGraph(options) {
     /**
      * Detects whether there is a link between two nodes.
      * Operation complexity is O(n) where n - number of links of a node.
-     * NOTE: this function is synonim for getLink()
+     * NOTE: this function is synonym for getLink()
      *
      * @returns link if there is one. null otherwise.
      */
@@ -228,7 +228,7 @@ function createGraph(options) {
      * Detects whether there is a node with given id
      * 
      * Operation complexity is O(1)
-     * NOTE: this function is synonim for getNode()
+     * NOTE: this function is synonym for getNode()
      *
      * @returns node if there is one; Falsy value otherwise.
      */
