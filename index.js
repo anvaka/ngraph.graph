@@ -370,7 +370,7 @@ function createGraph(options) {
   }
 
   function createUniqueLink(fromId, toId, data) {
-    // TODO: Get rid of this method.
+    // TODO: Find a better/faster way to store multigraphs
     var linkId = makeLinkId(fromId, toId);
     var isMultiEdge = multiEdges.hasOwnProperty(linkId);
     if (isMultiEdge || getLink(fromId, toId)) {
