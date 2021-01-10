@@ -100,10 +100,10 @@ test('add link adds link', function(t) {
 
   t.equal(graph.getNodesCount(), 2, 'Two nodes');
   t.equal(graph.getLinksCount(), 1, 'One link');
-  t.equal(firstNodeLinks.length, 1, 'number of links of the first node is wrong');
-  t.equal(secondNodeLinks.length, 1, 'number of links of the second node is wrong');
-  t.equal(link, firstNodeLinks[0], 'invalid link in the first node');
-  t.equal(link, secondNodeLinks[0], 'invalid link in the second node');
+  t.equal(firstNodeLinks.size, 1, 'number of links of the first node is wrong');
+  t.equal(secondNodeLinks.size, 1, 'number of links of the second node is wrong');
+  t.equal(link, Array.from(firstNodeLinks)[0], 'invalid link in the first node');
+  t.equal(link, Array.from(secondNodeLinks)[0], 'invalid link in the second node');
   t.end();
 });
 
@@ -126,7 +126,7 @@ test('it can add multi-edges', function (t) {
 
 test('it can produce unique link ids', function (t) {
   // eslint-disable-next-line no-shadow
-  t.test('by default links are not unique', function (t) {
+  t.test('by default links are de-duped', function (t) {
     var seen = {};
     var graph = createGraph();
     graph.addLink(1, 2, 'first');
@@ -135,7 +135,8 @@ test('it can produce unique link ids', function (t) {
     graph.forEachLink(verifyLinksAreNotUnique);
 
     var link = graph.getLink(1, 2);
-    t.equals(seen[link.id], 3, 'Link 1->2 seen 3 times');
+    t.equals(seen[link.id], 1, 'Link 1->2 seen 1 time');
+    t.equals(link.data, 'third', 'Last link wins');
 
     // eslint-disable-next-line no-shadow
     function verifyLinksAreNotUnique(link) {
@@ -160,24 +161,6 @@ test('it can produce unique link ids', function (t) {
 
     function verifyLinkIsUnique(link) {
       t.notOk(seen[link.id], link.id + ' is unique');
-      seen[link.id] = true;
-    }
-  });
-
-  // eslint-disable-next-line no-shadow
-  t.test('you can sacrifice uniqueness in favor of performance', function (t) {
-    var graph = createGraph({ });
-
-    var seen = {};
-    graph.addLink(1, 2, 'first');
-    graph.addLink(1, 2, 'second');
-    graph.addLink(1, 2, 'third');
-    graph.forEachLink(noticeLink);
-    t.equals(Object.keys(seen).length, 1, 'Only one link id');
-
-    t.end();
-
-    function noticeLink(link) {
       seen[link.id] = true;
     }
   });
@@ -252,8 +235,8 @@ test('remove link removes it', function(t) {
 
   t.equal(graph.getNodesCount(), 2, 'remove link should not remove nodes');
   t.equal(graph.getLinksCount(), 0, 'No Links');
-  t.equal(graph.getLinks(1).length, 0, 'link should be removed from the first node');
-  t.equal(graph.getLinks(2).length, 0, 'link should be removed from the second node');
+  t.equal(graph.getLinks(1).size, 0, 'link should be removed from the first node');
+  t.equal(graph.getLinks(2).size, 0, 'link should be removed from the second node');
   t.ok(linkIsRemoved, 'Link removal is successful');
 
   graph.forEachLink(function() {
@@ -333,8 +316,8 @@ test('remove node with many links removes them all', function(t) {
 
   t.equal(graph.getNodesCount(), 2, 'remove link should remove one node only');
   t.equal(graph.getLinks(1), null, 'link should be removed from the first node');
-  t.equal(graph.getLinks(2).length, 0, 'link should be removed from the second node');
-  t.equal(graph.getLinks(3).length, 0, 'link should be removed from the third node');
+  t.equal(graph.getLinks(2).size, 0, 'link should be removed from the second node');
+  t.equal(graph.getLinks(3).size, 0, 'link should be removed from the third node');
   graph.forEachLink(function() {
     test.ok(false, 'No links should be in graph');
   });

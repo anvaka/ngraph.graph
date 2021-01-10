@@ -18,7 +18,7 @@ declare module "ngraph.graph" {
 
     export interface Node<Data = any> {
         id: NodeId,
-        links: Link[],
+        links: ?Set<Link>,
         data: Data
     }
 

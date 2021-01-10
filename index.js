@@ -49,13 +49,13 @@ function createGraph(options) {
     throw new Error('ngraph.graph requires `Map` to be defined. Please polyfill it before using ngraph');
   } 
 
-  var nodes = new Map();
-  var links = [],
+  var nodes = new Map(); // nodeId => Node
+  var links = new Map(); // linkId => Link
     // Hash of multi-edges. Used to track ids of edges between same nodes
-    multiEdges = {},
-    suspendEvents = 0,
+  var multiEdges = {};
+  var suspendEvents = 0;
 
-    createLink = options.multigraph ? createUniqueLink : createSingleLink,
+  var createLink = options.multigraph ? createUniqueLink : createSingleLink,
 
     // Our graph API provides means to listen to graph changes. Users can subscribe
     // to be notified about changes in the graph by using `on` method. However
@@ -324,10 +324,8 @@ function createGraph(options) {
 
     var prevLinks = node.links;
     if (prevLinks) {
+      prevLinks.forEach(removeLink);
       node.links = null;
-      for(var i = 0; i < prevLinks.length; ++i) {
-        removeLink(prevLinks[i]);
-      }
     }
 
     nodes.delete(nodeId);
@@ -347,8 +345,9 @@ function createGraph(options) {
     var toNode = getNode(toId) || addNode(toId);
 
     var link = createLink(fromId, toId, data);
+    var isUpdate = links.has(link.id);
 
-    links.push(link);
+    links.set(link.id, link);
 
     // TODO: this is not cool. On large graphs potentially would consume more memory.
     addLinkToNode(fromNode, link);
@@ -357,7 +356,7 @@ function createGraph(options) {
       addLinkToNode(toNode, link);
     }
 
-    recordLinkChange(link, 'add');
+    recordLinkChange(link, isUpdate ? 'update' : 'add');
 
     exitModification();
 
@@ -366,6 +365,12 @@ function createGraph(options) {
 
   function createSingleLink(fromId, toId, data) {
     var linkId = makeLinkId(fromId, toId);
+    var prevLink = links.get(linkId);
+    if (prevLink) {
+      prevLink.data = data;
+      return prevLink;
+    }
+
     return new Link(fromId, toId, data, linkId);
   }
 
@@ -389,7 +394,7 @@ function createGraph(options) {
   }
 
   function getLinkCount() {
-    return links.length;
+    return links.size;
   }
 
   function getLinks(nodeId) {
@@ -401,30 +406,21 @@ function createGraph(options) {
     if (!link) {
       return false;
     }
-    var idx = indexOfElementInArray(link, links);
-    if (idx < 0) {
-      return false;
-    }
+    if (!links.get(link.id)) return false;
 
     enterModification();
 
-    links.splice(idx, 1);
+    links.delete(link.id);
 
     var fromNode = getNode(link.fromId);
     var toNode = getNode(link.toId);
 
     if (fromNode) {
-      idx = indexOfElementInArray(link, fromNode.links);
-      if (idx >= 0) {
-        fromNode.links.splice(idx, 1);
-      }
+      fromNode.links.delete(link);
     }
 
     if (toNode) {
-      idx = indexOfElementInArray(link, toNode.links);
-      if (idx >= 0) {
-        toNode.links.splice(idx, 1);
-      }
+      toNode.links.delete(link);
     }
 
     recordLinkChange(link, 'remove');
@@ -435,21 +431,8 @@ function createGraph(options) {
   }
 
   function getLink(fromNodeId, toNodeId) {
-    // TODO: Use sorted links to speed this up
-    var node = getNode(fromNodeId),
-      i;
-    if (!node || !node.links) {
-      return null;
-    }
-
-    for (i = 0; i < node.links.length; ++i) {
-      var link = node.links[i];
-      if (link.fromId === fromNodeId && link.toId === toNodeId) {
-        return link;
-      }
-    }
-
-    return null; // no link.
+    if (fromNodeId === undefined || toNodeId === undefined) return undefined;
+    return links.get(makeLinkId(fromNodeId, toNodeId));
   }
 
   function clear() {
@@ -461,10 +444,14 @@ function createGraph(options) {
   }
 
   function forEachLink(callback) {
-    var i, length;
     if (typeof callback === 'function') {
-      for (i = 0, length = links.length; i < length; ++i) {
-        callback(links[i]);
+      var valuesIterator = links.values();
+      var nextValue = valuesIterator.next();
+      while (!nextValue.done) {
+        if (callback(nextValue.value)) {
+          return true; // client doesn't want to proceed. Return.
+        }
+        nextValue = valuesIterator.next();
       }
     }
   }
@@ -484,28 +471,34 @@ function createGraph(options) {
   // eslint-disable-next-line no-shadow
   function forEachNonOrientedLink(links, nodeId, callback) {
     var quitFast;
-    for (var i = 0; i < links.length; ++i) {
-      var link = links[i];
-      var linkedNodeId = link.fromId === nodeId ? link.toId : link.fromId;
 
+    var valuesIterator = links.values();
+    var nextValue = valuesIterator.next();
+    while (!nextValue.done) {
+      var link = nextValue.value;
+      var linkedNodeId = link.fromId === nodeId ? link.toId : link.fromId;
       quitFast = callback(nodes.get(linkedNodeId), link);
       if (quitFast) {
         return true; // Client does not need more iterations. Break now.
       }
+      nextValue = valuesIterator.next();
     }
   }
 
   // eslint-disable-next-line no-shadow
   function forEachOrientedLink(links, nodeId, callback) {
     var quitFast;
-    for (var i = 0; i < links.length; ++i) {
-      var link = links[i];
+    var valuesIterator = links.values();
+    var nextValue = valuesIterator.next();
+    while (!nextValue.done) {
+      var link = nextValue.value;
       if (link.fromId === nodeId) {
         quitFast = callback(nodes.get(link.toId), link);
         if (quitFast) {
           return true; // Client does not need more iterations. Break now.
         }
       }
+      nextValue = valuesIterator.next();
     }
   }
 
@@ -542,26 +535,6 @@ function createGraph(options) {
   }
 }
 
-// need this for old browsers. Should this be a separate module?
-function indexOfElementInArray(element, array) {
-  if (!array) return -1;
-
-  if (array.indexOf) {
-    return array.indexOf(element);
-  }
-
-  var len = array.length,
-    i;
-
-  for (i = 0; i < len; i += 1) {
-    if (array[i] === element) {
-      return i;
-    }
-  }
-
-  return -1;
-}
-
 /**
  * Internal structure to represent node;
  */
@@ -573,9 +546,9 @@ function Node(id, data) {
 
 function addLinkToNode(node, link) {
   if (node.links) {
-    node.links.push(link);
+    node.links.add(link);
   } else {
-    node.links = [link];
+    node.links = new Set([link]);
   }
 }
 
