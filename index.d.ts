@@ -18,7 +18,7 @@ declare module "ngraph.graph" {
 
     export interface Node<Data = any> {
         id: NodeId,
-        links: ?Set<Link>,
+        links: Set<Link<any>> | null,
         data: Data
     }
 
@@ -27,7 +27,13 @@ declare module "ngraph.graph" {
         addLink: (from: NodeId, to: NodeId, data?: LinkData) => Link<LinkData>
         removeLink: (link: Link<LinkData>) => boolean
         removeNode: (nodeId: NodeId) => boolean
+
         getNode: (nodeId: NodeId) => Node<NodeData> | undefined
+
+        /**
+         * Checks whether given node exists in the graph. Return the node
+         * or undefined if no such node exist.
+         */
         hasNode: (nodeId: NodeId) => Node<NodeData> | undefined
         getLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link<LinkData> | null
         hasLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link<LinkData> | null
