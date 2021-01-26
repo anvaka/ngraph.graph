@@ -1,6 +1,6 @@
-// Type definitions for ngraph.graph v18.0.0
+// Type definitions for ngraph.graph v20.0.0
 // Project: https://github.com/anvaka/ngraph.graph
-// Definitions by: Nathan Westlake <https://github.com/CorayThan>
+// Definitions by: Nathan Westlake <https://github.com/CorayThan> and Anvaka <https://github.com/anvaka>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 declare module "ngraph.graph" {
@@ -9,6 +9,9 @@ declare module "ngraph.graph" {
     export type NodeId = string | number
     export type LinkId = string
 
+    /**
+     * A single link (edge) of the graph
+     */
     export interface Link<Data = any> {
         id: LinkId,
         fromId: NodeId,
@@ -16,9 +19,28 @@ declare module "ngraph.graph" {
         data: Data
     }
 
+    /**
+     * A single node of a graph.
+     */
     export interface Node<Data = any> {
+        /**
+         * Unique identifier of this node
+         */
         id: NodeId,
+
+        /**
+         * Set of incoming/outgoing links (edges) to/from this node.
+         * 
+         * For the sake of memory consumption preservation, this property
+         * is null when this node has no links.
+         * 
+         * Link instance is referentially equal throughout the API.
+         */
         links: Set<Link<any>> | null,
+        
+        /**
+         * Associated data connected to this node.
+         */
         data: Data
     }
 
