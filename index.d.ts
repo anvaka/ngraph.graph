@@ -13,9 +13,23 @@ declare module "ngraph.graph" {
      * A single link (edge) of the graph
      */
     export interface Link<Data = any> {
+        /**
+         * Unique identifier of this link
+         */
         id: LinkId,
+
+        /**
+         * Node identifer where this links starts
+         */
         fromId: NodeId,
+
+        /**
+         * Node identifer where this link points to
+         */
         toId: NodeId,
+        /**
+         * Arbitrary data associated with this link
+         */
         data: Data
     }
 
@@ -44,8 +58,23 @@ declare module "ngraph.graph" {
         data: Data
     }
 
+    /**
+     * A graph data structure
+     */
     export interface Graph<NodeData = any, LinkData = any> {
+        /**
+         * Adds a new node to the graph. If node with such id already exists
+         * its data is overwritten with the new data
+         */
         addNode: (node: NodeId, data?: NodeData) => Node<NodeData>
+
+        /**
+         * Adds a new link to the graph. If link already exists and the graph
+         * is not a multigraph, then link's data is overwritten with a new data.
+         * 
+         * When graph is a multigraph, then a new link is always added between the
+         * nodes.
+         */
         addLink: (from: NodeId, to: NodeId, data?: LinkData) => Link<LinkData>
         removeLink: (link: Link<LinkData>) => boolean
         removeNode: (nodeId: NodeId) => boolean
