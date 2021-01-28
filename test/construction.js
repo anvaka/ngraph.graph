@@ -246,6 +246,25 @@ test('remove link removes it', function(t) {
   t.end();
 });
 
+test('it can remove link by from/to ids', function(t) {
+  var graph = createGraph();
+  graph.addLink(1, 2);
+
+  var linkIsRemoved = graph.removeLink(1, 2);
+
+  t.equal(graph.getNodesCount(), 2, 'remove link should not remove nodes');
+  t.equal(graph.getLinksCount(), 0, 'No Links');
+  t.equal(graph.getLinks(1).size, 0, 'link should be removed from the first node');
+  t.equal(graph.getLinks(2).size, 0, 'link should be removed from the second node');
+  t.ok(linkIsRemoved, 'Link removal is successful');
+
+  graph.forEachLink(function() {
+    test.ok(false, 'No links should be in graph');
+  });
+
+  t.end();
+});
+
 test('remove link returns false if no link removed', function (t) {
   var graph = createGraph();
 

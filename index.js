@@ -324,7 +324,7 @@ function createGraph(options) {
 
     var prevLinks = node.links;
     if (prevLinks) {
-      prevLinks.forEach(removeLink);
+      prevLinks.forEach(removeLinkInstance);
       node.links = null;
     }
 
@@ -402,7 +402,14 @@ function createGraph(options) {
     return node ? node.links : null;
   }
 
-  function removeLink(link) {
+  function removeLink(link, otherId) {
+    if (otherId !== undefined) {
+      link = getLink(link, otherId);
+    }
+    return removeLinkInstance(link);
+  }
+
+  function removeLinkInstance(link) {
     if (!link) {
       return false;
     }
