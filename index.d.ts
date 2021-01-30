@@ -92,6 +92,10 @@ declare module "ngraph.graph" {
          */
         removeNode: (nodeId: NodeId) => boolean
 
+        /**
+         * Returns a node by its identifier. Undefined value is returned if node
+         * with such identifer does not exist.
+         */
         getNode: (nodeId: NodeId) => Node<NodeData> | undefined
 
         /**
@@ -99,8 +103,12 @@ declare module "ngraph.graph" {
          * or undefined if no such node exist.
          */
         hasNode: (nodeId: NodeId) => Node<NodeData> | undefined
-        getLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link<LinkData> | null
-        hasLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link<LinkData> | null
+
+        /**
+         * Returns a link between two nodes
+         */
+        getLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link<LinkData> | undefined
+        hasLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link<LinkData> | undefined
         getNodesCount: () => number
         getLinksCount: () => number
         getNodeCount: () => number

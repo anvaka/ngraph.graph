@@ -241,7 +241,7 @@ function createGraph(options) {
      * @param {string} fromId link start identifier
      * @param {string} toId link end identifier
      *
-     * @returns link if there is one. null otherwise.
+     * @returns link if there is one; undefined otherwise.
      */
     getLink: getLink
   };
