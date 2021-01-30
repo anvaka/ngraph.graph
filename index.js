@@ -162,7 +162,7 @@ function createGraph(options) {
      *
      * @param nodeId requested node identifier.
      *
-     * @return Array of links from and to requested node if such node exists;
+     * @return Set of links from and to requested node if such node exists;
      *   otherwise null is returned.
      */
     getLinks: getLinks,

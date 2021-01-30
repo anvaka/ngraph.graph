@@ -108,12 +108,37 @@ declare module "ngraph.graph" {
          * Returns a link between two nodes
          */
         getLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link<LinkData> | undefined
+
+        /**
+         * Checks if link is present in the graph 
+         */
         hasLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link<LinkData> | undefined
+
+        /**
+         * Returns number of nodes in the graph
+         */
         getNodesCount: () => number
-        getLinksCount: () => number
+
+        /**
+         * Returns number of nodes in the graph
+         */
         getNodeCount: () => number
+
+        /**
+         * Returns number of links (edges) in the graph
+         */
+        getLinksCount: () => number
+
+        /**
+         * Returns number of links (edges) in the graph
+         */
         getLinkCount: () => number
-        getLinks: (nodeId: NodeId) => Link<LinkData>[] | null
+
+        /**
+         * Returns all links associated with this node
+         */
+        getLinks: (nodeId: NodeId) => Set<Link<LinkData>> | null
+
         /** To stop the iteration return true in the callback */
         forEachNode: (callbackPerNode: (node: Node<NodeData>) => void | undefined | null | boolean) => void
         forEachLinkedNode: (nodeId: NodeId, callbackPerNode: (node: Node<NodeData>, link: Link<LinkData>) => void, oriented: boolean) => void
