@@ -139,12 +139,35 @@ declare module "ngraph.graph" {
          */
         getLinks: (nodeId: NodeId) => Set<Link<LinkData>> | null
 
-        /** To stop the iteration return true in the callback */
+        /** 
+         * Iterates over every single node in the graph, passing the node to a callback.
+         * 
+         * If callback function returns "true"-like value, enumeration stops.
+         **/
         forEachNode: (callbackPerNode: (node: Node<NodeData>) => void | undefined | null | boolean) => void
+
+        /**
+         * Iterates over every single link in the graph, passing the link to a callback.
+         * If callback function returns "true"-like value, enumeration stops.
+         */
+        forEachLink: (callbackPerLink: (link: Link<LinkData>) => void | undefined | boolean) => void
+
         forEachLinkedNode: (nodeId: NodeId, callbackPerNode: (node: Node<NodeData>, link: Link<LinkData>) => void, oriented: boolean) => void
-        forEachLink: (callbackPerLink: (link: Link<LinkData>) => void) => void
+        /**
+         * Suspend all notifications about graph changes until
+         * endUpdate is called.
+         */
         beginUpdate: () => void
+
+        /**
+         * Resumes all notifications about graph changes and fires
+         * graph 'changed' event in case there are any pending changes.
+         */
         endUpdate: () => void
+
+        /**
+         * Removes all nodes and links from the graph.
+         */
         clear: () => void
     }
 
