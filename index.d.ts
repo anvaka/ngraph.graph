@@ -3,6 +3,9 @@
 // Definitions by: Nathan Westlake <https://github.com/CorayThan> and Anvaka <https://github.com/anvaka>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
+/**
+ * A graph data structure for javascript.
+ */
 declare module "ngraph.graph" {
     import { EventedType } from 'ngraph.events'
     
@@ -171,6 +174,9 @@ declare module "ngraph.graph" {
         clear: () => void
     }
 
+    /**
+    * Creates a new instance of a graph.
+    */
     export default function createGraph<NodeData = any, LinkData = any>(options?: { multigraph: boolean }): Graph<NodeData, LinkData> & EventedType
 
 }
