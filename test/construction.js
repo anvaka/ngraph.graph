@@ -45,7 +45,7 @@ test('hasLink checks links', function (t) {
 test('hasLink is the same as getLink', function (t) {
   var graph = createGraph();
 
-  t.equals(graph.getLink, graph.hasLink, 'hasLink is synonim for getLink');
+  t.equal(graph.getLink, graph.hasLink, 'hasLink is synonym for getLink');
   t.end();
 });
 
@@ -69,9 +69,9 @@ test('it fires update event when node is updated', function(t) {
 
   function checkChangedEvent(changes) {
     var change = changes[0];
-    t.equals(change.node.id, 1);
-    t.equals(change.node.data, 'world');
-    t.equals(change.changeType, 'update');
+    t.equal(change.node.id, 1);
+    t.equal(change.node.data, 'world');
+    t.equal(change.changeType, 'update');
   }
 });
 
@@ -86,8 +86,8 @@ test('it can add node with id similar to reserved prototype property', function(
   });
 
   t.ok(graph.hasLink('watch', 'constructor'));
-  t.equals(graph.getLinksCount(), 1, 'one link');
-  t.equals(iterated, 2, 'has two nodes');
+  t.equal(graph.getLinksCount(), 1, 'one link');
+  t.equal(iterated, 2, 'has two nodes');
   t.end();
 });
 
@@ -135,8 +135,8 @@ test('it can produce unique link ids', function (t) {
     graph.forEachLink(verifyLinksAreNotUnique);
 
     var link = graph.getLink(1, 2);
-    t.equals(seen[link.id], 1, 'Link 1->2 seen 1 time');
-    t.equals(link.data, 'third', 'Last link wins');
+    t.equal(seen[link.id], 1, 'Link 1->2 seen 1 time');
+    t.equal(link.data, 'third', 'Last link wins');
 
     // eslint-disable-next-line no-shadow
     function verifyLinksAreNotUnique(link) {
@@ -156,7 +156,7 @@ test('it can produce unique link ids', function (t) {
     graph.addLink(1, 2, 'second');
     graph.addLink(1, 2, 'third');
     graph.forEachLink(verifyLinkIsUnique);
-    t.equals(graph.getLinksCount(), 3, 'All three links are here');
+    t.equal(graph.getLinksCount(), 3, 'All three links are here');
     t.end();
 
     function verifyLinkIsUnique(link) {
@@ -371,8 +371,8 @@ test('beginUpdate holds events', function(t) {
   });
   graph.beginUpdate();
   graph.addNode(1);
-  t.equals(changedCount, 0, 'Begin update freezes updates until `endUpdate()`');
+  t.equal(changedCount, 0, 'Begin update freezes updates until `endUpdate()`');
   graph.endUpdate();
-  t.equals(changedCount, 1, 'event is fired only after endUpdate()');
+  t.equal(changedCount, 1, 'event is fired only after endUpdate()');
   t.end();
 });

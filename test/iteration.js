@@ -105,7 +105,7 @@ test('forEachNode will stop when requested', function(t) {
   var graph = createGraph();
   graph.addLink(1, 2);
   graph.forEachNode(function(node) {
-    t.equals(node.id, 1, 'We visit only one node');
+    t.equal(node.id, 1, 'We visit only one node');
     return true; // we want to stop now!
   });
 
@@ -116,7 +116,7 @@ test('forEachNode returns fastQuit', function(t) {
   var graph = createGraph();
   graph.addLink(1, 2);
   var fastQuit = graph.forEachNode(function(node) {
-    t.equals(node.id, 1, 'We visit only one node');
+    t.equal(node.id, 1, 'We visit only one node');
     return true; // we want to stop now!
   }); // no callback? No worries
 
