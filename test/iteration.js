@@ -42,29 +42,36 @@ test('forEachLinkedNode will not crash on invalid node id', function(t) {
 });
 
 test('forEachLinkedNode can quit fast for oriented graphs', function(t) {
-  t.plan(1);
   var graph = createGraph();
   var oriented = true;
   graph.addLink(1, 2);
   graph.addLink(1, 3);
 
+  var visited = 0;
   graph.forEachLinkedNode(1, function() {
     t.ok(true, 'Visited first link');
+    visited += 1;
     return true; // We want to stop right now!
   }, oriented);
+  t.equal(visited, 1, 'One link is visited');
+  t.end();
 });
 
 test('forEachLinkedNode can quit fast for non-oriented graphs', function(t) {
-  t.plan(1);
   var graph = createGraph();
   var oriented = false;
   graph.addLink(1, 2);
   graph.addLink(1, 3);
 
+  var visited = 0;
   graph.forEachLinkedNode(1, function() {
     t.ok(true, 'Visited first link');
+    visited += 1;
     return true; // We want to stop right now!
   }, oriented);
+
+  t.equal(visited, 1, 'One link is visited');
+  t.end();
 });
 
 test('forEachLinkedNode returns quitFast flag', function(t) {
@@ -124,5 +131,19 @@ test('forEachNode returns fastQuit', function(t) {
 
   var notSoFast = graph.forEachNode(function() { });
   t.notOk(notSoFast, 'fastQuit is not set when all nodes visited');
+  t.end();
+});
+
+test('forEachLink stops when requested', function(t) {
+  var graph = createGraph();
+  graph.addLink(1, 2);
+  graph.addLink(2, 3);
+
+  var visitCount = 0;
+  graph.forEachLink(function() {
+    visitCount += 1;
+    return true;
+  });
+  t.equal(visitCount, 1, 'only one link visited');
   t.end();
 });
