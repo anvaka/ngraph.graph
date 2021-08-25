@@ -49,6 +49,13 @@ test('hasLink is the same as getLink', function (t) {
   t.end();
 });
 
+test('it considers uniqueLinkId as multigraph', function (t) {
+  var options = {uniqueLinkId: true};
+  createGraph(options);
+  t.equal(options.multigraph, true, 'multigraph is set');
+  t.end();
+});
+
 test('it throw if no node id is passed', function(t) {
   var graph = createGraph();
   t.throws(function() {
