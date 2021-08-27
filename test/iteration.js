@@ -134,6 +134,15 @@ test('forEachNode returns fastQuit', function(t) {
   t.end();
 });
 
+test('forEachNode throws when callback is not a function', function(t) {
+  var graph = createGraph();
+  graph.addLink(1, 2);
+  t.throws(function() {
+    graph.forEachNode('not a function');
+  });
+  t.end();
+});
+
 test('forEachLink stops when requested', function(t) {
   var graph = createGraph();
   graph.addLink(1, 2);
