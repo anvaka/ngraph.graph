@@ -7,7 +7,7 @@
   "unpkg": "dist/ngraph.graph.min.js",
   "scripts": {
     "build": "browserify index.js -s createGraph -o dist/ngraph.graph.js && uglifyjs dist/ngraph.graph.js -o dist/ngraph.graph.min.js",
-    "test": "tap --branches=80 --lines=80 --statements=80 --functions=80 test/*.js",
+    "test": "tap --branches=90 --lines=90 --statements=90 --functions=90 test/*.js",
     "cover": "tap --branches=80 --lines=80 --statements=80 --functions=80 --coverage-report=html --no-browser test/*.js"
   },
   "repository": {
