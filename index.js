@@ -355,11 +355,14 @@ function createGraph(options) {
 
     links.set(link.id, link);
 
-    // TODO: this is not cool. On large graphs potentially would consume more memory.
-    addLinkToNode(fromNode, link);
-    if (fromId !== toId) {
-      // make sure we are not duplicating links for self-loops
-      addLinkToNode(toNode, link);
+    // when we update a link we don't need to "addLinkToNode" because juste link.data changed
+    if (isUpdate === false) {
+      // TODO: this is not cool. On large graphs potentially would consume more memory.
+      addLinkToNode(fromNode, link);
+      if (fromId !== toId) {
+        // make sure we are not duplicating links for self-loops
+        addLinkToNode(toNode, link);
+      }
     }
 
     recordLinkChange(link, isUpdate ? 'update' : 'add');
