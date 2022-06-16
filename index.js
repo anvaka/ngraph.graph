@@ -371,12 +371,6 @@ function createGraph(options) {
 
   function createSingleLink(fromId, toId, data) {
     var linkId = makeLinkId(fromId, toId);
-    var prevLink = links.get(linkId);
-    if (prevLink) {
-      prevLink.data = data;
-      return prevLink;
-    }
-
     return new Link(fromId, toId, data, linkId);
   }
 
