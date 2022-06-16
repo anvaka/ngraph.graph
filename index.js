@@ -30,10 +30,10 @@ function createGraph(options) {
   if ('uniqueLinkId' in options) {
     console.warn(
       'ngraph.graph: Starting from version 0.14 `uniqueLinkId` is deprecated.\n' +
-      'Use `multigraph` option instead\n',
+        'Use `multigraph` option instead\n',
       '\n',
-      'Note: there is also change in default behavior: From now on each graph\n'+
-      'is considered to be not a multigraph by default (each edge is unique).'
+      'Note: there is also change in default behavior: From now on each graph\n' +
+        'is considered to be not a multigraph by default (each edge is unique).'
     );
 
     options.multigraph = options.uniqueLinkId;
@@ -46,17 +46,18 @@ function createGraph(options) {
 
   if (typeof Map !== 'function') {
     // TODO: Should we polyfill it ourselves? We don't use much operations there..
-    throw new Error('ngraph.graph requires `Map` to be defined. Please polyfill it before using ngraph');
-  } 
+    throw new Error(
+      'ngraph.graph requires `Map` to be defined. Please polyfill it before using ngraph'
+    );
+  }
 
   var nodes = new Map(); // nodeId => Node
   var links = new Map(); // linkId => Link
-    // Hash of multi-edges. Used to track ids of edges between same nodes
+  // Hash of multi-edges. Used to track ids of edges between same nodes
   var multiEdges = {};
   var suspendEvents = 0;
 
   var createLink = options.multigraph ? createUniqueLink : createSingleLink,
-
     // Our graph API provides means to listen to graph changes. Users can subscribe
     // to be notified about changes in the graph by using `on` method. However
     // in some cases they don't use it. To avoid unnecessary memory consumption
@@ -156,7 +157,7 @@ function createGraph(options) {
      * Synonym for `getLinkCount()`
      */
     getLinksCount: getLinkCount,
-    
+
     /**
      * Synonym for `getNodeCount()`
      */
@@ -232,7 +233,7 @@ function createGraph(options) {
 
     /**
      * Detects whether there is a node with given id
-     * 
+     *
      * Operation complexity is O(1)
      * NOTE: this function is synonym for getNode()
      *
@@ -343,7 +344,6 @@ function createGraph(options) {
     return true;
   }
 
-
   function addLink(fromId, toId, data) {
     enterModification();
 
@@ -355,14 +355,11 @@ function createGraph(options) {
 
     links.set(link.id, link);
 
-    // when we update a link we don't need to "addLinkToNode" because juste link.data changed
-    if (isUpdate === false) {
-      // TODO: this is not cool. On large graphs potentially would consume more memory.
-      addLinkToNode(fromNode, link);
-      if (fromId !== toId) {
-        // make sure we are not duplicating links for self-loops
-        addLinkToNode(toNode, link);
-      }
+    // TODO: this is not cool. On large graphs potentially would consume more memory.
+    addLinkToNode(fromNode, link);
+    if (fromId !== toId) {
+      // make sure we are not duplicating links for self-loops
+      addLinkToNode(toNode, link);
     }
 
     recordLinkChange(link, isUpdate ? 'update' : 'add');
@@ -385,7 +382,7 @@ function createGraph(options) {
       if (!isMultiEdge) {
         multiEdges[linkId] = 0;
       }
-      var suffix = '@' + (++multiEdges[linkId]);
+      var suffix = '@' + ++multiEdges[linkId];
       linkId = makeLinkId(fromId + suffix, toId + suffix);
     }
 
@@ -426,11 +423,11 @@ function createGraph(options) {
     var toNode = getNode(link.toId);
 
     if (fromNode) {
-      fromNode.links.delete(link);
+      fromNode.links.delete(link.id);
     }
 
     if (toNode) {
-      toNode.links.delete(link);
+      toNode.links.delete(link.id);
     }
 
     recordLinkChange(link, 'remove');
@@ -447,7 +444,7 @@ function createGraph(options) {
 
   function clear() {
     enterModification();
-    forEachNode(function(node) {
+    forEachNode(function (node) {
       removeNode(node.id);
     });
     exitModification();
@@ -531,7 +528,10 @@ function createGraph(options) {
 
   function forEachNode(callback) {
     if (typeof callback !== 'function') {
-      throw new Error('Function is expected to iterate over graph nodes. You passed ' + callback);
+      throw new Error(
+        'Function is expected to iterate over graph nodes. You passed ' +
+          callback
+      );
     }
 
     var valuesIterator = nodes.values();
@@ -555,11 +555,11 @@ function Node(id, data) {
 }
 
 function addLinkToNode(node, link) {
-  if (node.links) {
-    node.links.add(link);
-  } else {
-    node.links = new Set([link]);
+  if (!node.links) {
+    node.links = new Map();
   }
+
+  node.links.set(link.id, link);
 }
 
 /**
