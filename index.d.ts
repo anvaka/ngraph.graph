@@ -22,12 +22,12 @@ declare module "ngraph.graph" {
         id: LinkId,
 
         /**
-         * Node identifer where this links starts
+         * Node identifier where this links starts
          */
         fromId: NodeId,
 
         /**
-         * Node identifer where this link points to
+         * Node identifier where this link points to
          */
         toId: NodeId,
         /**
