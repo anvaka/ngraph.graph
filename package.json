@@ -1,6 +1,6 @@
 {
   "name": "ngraph.graph",
-  "version": "20.0.0",
+  "version": "20.0.1",
   "description": "graph data structure",
   "main": "index.js",
   "jsdelivr": "dist/ngraph.graph.min.js",
