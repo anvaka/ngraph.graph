@@ -50,13 +50,13 @@ function createGraph(options) {
     throw new Error('ngraph.graph requires `Map` to be defined. Please polyfill it before using ngraph');
   } 
 
-  var nodes = new Map();
-  var links = [],
+  var nodes = new Map(); // nodeId => Node
+  var links = new Map(); // linkId => Link
     // Hash of multi-edges. Used to track ids of edges between same nodes
-    multiEdges = {},
-    suspendEvents = 0,
+  var multiEdges = {};
+  var suspendEvents = 0;
 
-    createLink = options.multigraph ? createUniqueLink : createSingleLink,
+  var createLink = options.multigraph ? createUniqueLink : createSingleLink,
 
     // Our graph API provides means to listen to graph changes. Users can subscribe
     // to be notified about changes in the graph by using `on` method. However
@@ -77,6 +77,12 @@ function createGraph(options) {
 
   // this is our public API:
   var graphPart = {
+    /**
+     * Sometimes duck typing could be slow. Giving clients a hint about data structure
+     * via explicit version number here:
+     */
+    version: 20.0,
+
     /**
      * Adds node to the graph. If node with given id already exists in the graph
      * its data is extended with whatever comes in 'data' argument.
@@ -135,16 +141,27 @@ function createGraph(options) {
      *
      * @return number of nodes in the graph.
      */
-    getNodesCount: function () {
-      return nodes.size;
-    },
+    getNodeCount: getNodeCount,
 
     /**
      * Gets total number of links in the graph.
      */
-    getLinksCount: function () {
-      return links.length;
-    },
+    getLinkCount: getLinkCount,
+
+    /**
+     * Gets total number of links in the graph.
+     */
+    getEdgeCount: getLinkCount,
+
+    /**
+     * Synonym for `getLinkCount()`
+     */
+    getLinksCount: getLinkCount,
+    
+    /**
+     * Synonym for `getNodeCount()`
+     */
+    getNodesCount: getNodeCount,
 
     /**
      * Gets all links (inbound and outbound) from the node with given id.
@@ -152,7 +169,7 @@ function createGraph(options) {
      *
      * @param nodeId requested node identifier.
      *
-     * @return Array of links from and to requested node if such node exists;
+     * @return Set of links from and to requested node if such node exists;
      *   otherwise null is returned.
      */
     getLinks: getLinks,
@@ -208,7 +225,7 @@ function createGraph(options) {
     /**
      * Detects whether there is a link between two nodes.
      * Operation complexity is O(n) where n - number of links of a node.
-     * NOTE: this function is synonim for getLink()
+     * NOTE: this function is synonym for getLink()
      *
      * @returns link if there is one. null otherwise.
      */
@@ -218,7 +235,7 @@ function createGraph(options) {
      * Detects whether there is a node with given id
      * 
      * Operation complexity is O(1)
-     * NOTE: this function is synonim for getNode()
+     * NOTE: this function is synonym for getNode()
      *
      * @returns node if there is one; Falsy value otherwise.
      */
@@ -231,7 +248,7 @@ function createGraph(options) {
      * @param {string} fromId link start identifier
      * @param {string} toId link end identifier
      *
-     * @returns link if there is one. null otherwise.
+     * @returns link if there is one; undefined otherwise.
      */
     getLink: getLink
   };
@@ -314,13 +331,11 @@ function createGraph(options) {
 
     var prevLinks = node.links;
     if (prevLinks) {
+      prevLinks.forEach(removeLinkInstance);
       node.links = null;
-      for(var i = 0; i < prevLinks.length; ++i) {
-        removeLink(prevLinks[i]);
-      }
     }
 
-    nodes.delete(nodeId)
+    nodes.delete(nodeId);
 
     recordNodeChange(node, 'remove');
 
@@ -337,8 +352,9 @@ function createGraph(options) {
     var toNode = getNode(toId) || addNode(toId);
 
     var link = createLink(fromId, toId, data);
+    var isUpdate = links.has(link.id);
 
-    links.push(link);
+    links.set(link.id, link);
 
     // TODO: this is not cool. On large graphs potentially would consume more memory.
     addLinkToNode(fromNode, link);
@@ -347,7 +363,7 @@ function createGraph(options) {
       addLinkToNode(toNode, link);
     }
 
-    recordLinkChange(link, 'add');
+    recordLinkChange(link, isUpdate ? 'update' : 'add');
 
     exitModification();
 
@@ -356,11 +372,17 @@ function createGraph(options) {
 
   function createSingleLink(fromId, toId, data) {
     var linkId = makeLinkId(fromId, toId);
+    var prevLink = links.get(linkId);
+    if (prevLink) {
+      prevLink.data = data;
+      return prevLink;
+    }
+
     return new Link(fromId, toId, data, linkId);
   }
 
   function createUniqueLink(fromId, toId, data) {
-    // TODO: Get rid of this method.
+    // TODO: Find a better/faster way to store multigraphs
     var linkId = makeLinkId(fromId, toId);
     var isMultiEdge = multiEdges.hasOwnProperty(linkId);
     if (isMultiEdge || getLink(fromId, toId)) {
@@ -374,39 +396,45 @@ function createGraph(options) {
     return new Link(fromId, toId, data, linkId);
   }
 
+  function getNodeCount() {
+    return nodes.size;
+  }
+
+  function getLinkCount() {
+    return links.size;
+  }
+
   function getLinks(nodeId) {
     var node = getNode(nodeId);
     return node ? node.links : null;
   }
 
-  function removeLink(link) {
+  function removeLink(link, otherId) {
+    if (otherId !== undefined) {
+      link = getLink(link, otherId);
+    }
+    return removeLinkInstance(link);
+  }
+
+  function removeLinkInstance(link) {
     if (!link) {
       return false;
     }
-    var idx = indexOfElementInArray(link, links);
-    if (idx < 0) {
-      return false;
-    }
+    if (!links.get(link.id)) return false;
 
     enterModification();
 
-    links.splice(idx, 1);
+    links.delete(link.id);
 
     var fromNode = getNode(link.fromId);
     var toNode = getNode(link.toId);
 
     if (fromNode) {
-      idx = indexOfElementInArray(link, fromNode.links);
-      if (idx >= 0) {
-        fromNode.links.splice(idx, 1);
-      }
+      fromNode.links.delete(link);
     }
 
     if (toNode) {
-      idx = indexOfElementInArray(link, toNode.links);
-      if (idx >= 0) {
-        toNode.links.splice(idx, 1);
-      }
+      toNode.links.delete(link);
     }
 
     recordLinkChange(link, 'remove');
@@ -417,21 +445,8 @@ function createGraph(options) {
   }
 
   function getLink(fromNodeId, toNodeId) {
-    // TODO: Use sorted links to speed this up
-    var node = getNode(fromNodeId),
-      i;
-    if (!node || !node.links) {
-      return null;
-    }
-
-    for (i = 0; i < node.links.length; ++i) {
-      var link = node.links[i];
-      if (link.fromId === fromNodeId && link.toId === toNodeId) {
-        return link;
-      }
-    }
-
-    return null; // no link.
+    if (fromNodeId === undefined || toNodeId === undefined) return undefined;
+    return links.get(makeLinkId(fromNodeId, toNodeId));
   }
 
   function clear() {
@@ -443,10 +458,14 @@ function createGraph(options) {
   }
 
   function forEachLink(callback) {
-    var i, length;
     if (typeof callback === 'function') {
-      for (i = 0, length = links.length; i < length; ++i) {
-        callback(links[i]);
+      var valuesIterator = links.values();
+      var nextValue = valuesIterator.next();
+      while (!nextValue.done) {
+        if (callback(nextValue.value)) {
+          return true; // client doesn't want to proceed. Return.
+        }
+        nextValue = valuesIterator.next();
       }
     }
   }
@@ -463,29 +482,37 @@ function createGraph(options) {
     }
   }
 
+  // eslint-disable-next-line no-shadow
   function forEachNonOrientedLink(links, nodeId, callback) {
     var quitFast;
-    for (var i = 0; i < links.length; ++i) {
-      var link = links[i];
-      var linkedNodeId = link.fromId === nodeId ? link.toId : link.fromId;
 
+    var valuesIterator = links.values();
+    var nextValue = valuesIterator.next();
+    while (!nextValue.done) {
+      var link = nextValue.value;
+      var linkedNodeId = link.fromId === nodeId ? link.toId : link.fromId;
       quitFast = callback(nodes.get(linkedNodeId), link);
       if (quitFast) {
         return true; // Client does not need more iterations. Break now.
       }
+      nextValue = valuesIterator.next();
     }
   }
 
+  // eslint-disable-next-line no-shadow
   function forEachOrientedLink(links, nodeId, callback) {
     var quitFast;
-    for (var i = 0; i < links.length; ++i) {
-      var link = links[i];
+    var valuesIterator = links.values();
+    var nextValue = valuesIterator.next();
+    while (!nextValue.done) {
+      var link = nextValue.value;
       if (link.fromId === nodeId) {
-        quitFast = callback(nodes.get(link.toId), link)
+        quitFast = callback(nodes.get(link.toId), link);
         if (quitFast) {
           return true; // Client does not need more iterations. Break now.
         }
       }
+      nextValue = valuesIterator.next();
     }
   }
 
@@ -522,26 +549,6 @@ function createGraph(options) {
   }
 }
 
-// need this for old browsers. Should this be a separate module?
-function indexOfElementInArray(element, array) {
-  if (!array) return -1;
-
-  if (array.indexOf) {
-    return array.indexOf(element);
-  }
-
-  var len = array.length,
-    i;
-
-  for (i = 0; i < len; i += 1) {
-    if (array[i] === element) {
-      return i;
-    }
-  }
-
-  return -1;
-}
-
 /**
  * Internal structure to represent node;
  */
@@ -553,9 +560,9 @@ function Node(id, data) {
 
 function addLinkToNode(node, link) {
   if (node.links) {
-    node.links.push(link);
+    node.links.add(link);
   } else {
-    node.links = [link];
+    node.links = new Set([link]);
   }
 }
 

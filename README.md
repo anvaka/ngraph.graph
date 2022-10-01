@@ -18,7 +18,7 @@ npm install ngraph.graph
 Or download from CDN:
 
 ``` html
-<script src='https://unpkg.com/ngraph.graph@19.0.0/dist/ngraph.graph.min.js'></script>
+<script src='https://unpkg.com/ngraph.graph@20.0.1/dist/ngraph.graph.min.js'></script>
 ```
 
 If you download from CDN the library will be available under `createGraph` global name.
