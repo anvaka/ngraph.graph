@@ -7,8 +7,7 @@
   "unpkg": "dist/ngraph.graph.min.js",
   "scripts": {
     "build": "browserify index.js -s createGraph -o dist/ngraph.graph.js && uglifyjs dist/ngraph.graph.js -o dist/ngraph.graph.min.js",
-    "test": "tap --branches=90 --lines=90 --statements=90 --functions=90 test/*.js",
-    "cover": "tap --branches=80 --lines=80 --statements=80 --functions=80 --coverage-report=html --no-browser test/*.js"
+    "test": "tap test/*.js"
   },
   "repository": {
     "type": "git",
@@ -36,7 +35,7 @@
     "browserify": "^17.0.0",
     "eslint": "^7.25.0",
     "ngraph.random": "^1.1.0",
-    "tap": "^16.3.3",
+    "tap": "^18.1.4",
     "uglify-js": "^3.13.5"
   },
   "dependencies": {
