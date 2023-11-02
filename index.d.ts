@@ -155,7 +155,13 @@ declare module "ngraph.graph" {
          */
         forEachLink: (callbackPerLink: (link: Link<LinkData>) => void | undefined | boolean) => void
 
-        forEachLinkedNode: (nodeId: NodeId, callbackPerNode: (node: Node<NodeData>, link: Link<LinkData>) => void, oriented: boolean) => void
+        /**
+         * Iterates over other node connected to the `nodeId`. If `oriented` is set to true,
+         * the callback will receive nodes on the `link.toId` end. Otherwise callback will
+         * receive nodes on either `.fromId` or `.toId`, depending on the `nodeId` argument.
+         */
+        forEachLinkedNode: (nodeId: NodeId, callbackPerNode: (otherNode: Node<NodeData>, link: Link<LinkData>) => void, oriented: boolean) => void
+
         /**
          * Suspend all notifications about graph changes until
          * endUpdate is called.
