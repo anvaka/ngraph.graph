@@ -243,9 +243,11 @@ function createGraph(options) {
     /**
      * Gets an edge between two nodes.
      * Operation complexity is O(n) where n - number of links of a node.
+     * 
+     * If only the first arg is provided, gets an edge by its id.
      *
-     * @param {string} fromId link start identifier
-     * @param {string} toId link end identifier
+     * @param {string} fromId link start identifier or link id
+     * @param {string} [toId] link end identifier
      *
      * @returns link if there is one; undefined otherwise.
      */
@@ -444,6 +446,9 @@ function createGraph(options) {
   }
 
   function getLink(fromNodeId, toNodeId) {
+    if (fromNodeId !== undefined && toNodeId === undefined) { // if only 1st arg, then search by linkId
+      return links.get(fromNodeId);
+    }
     if (fromNodeId === undefined || toNodeId === undefined) return undefined;
     return links.get(makeLinkId(fromNodeId, toNodeId));
   }
