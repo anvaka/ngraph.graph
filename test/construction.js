@@ -49,6 +49,14 @@ test('hasLink is the same as getLink', function (t) {
   t.end();
 });
 
+test('hasLink checks links by id', function (t) {
+  var graph = createGraph();
+  var linkId = graph.addLink(1, 2).id;
+  var link12 = graph.hasLink(linkId);
+  t.ok(link12.fromId === 1 && link12.toId === 2, 'link is found');
+  t.end();
+});
+
 test('it considers uniqueLinkId as multigraph', function (t) {
   var options = {uniqueLinkId: true};
   createGraph(options);
