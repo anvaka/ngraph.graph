@@ -108,14 +108,32 @@ declare module "ngraph.graph" {
         hasNode: (nodeId: NodeId) => Node<NodeData> | undefined
 
         /**
-         * Returns a link between two nodes
+         * Returns a link between two nodes or by its id
          */
-        getLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link<LinkData> | undefined
+        getLink: {
+            /**
+             * Gets an edge between two nodes
+             */
+            (fromNodeId: NodeId, toNodeId: NodeId): Link<LinkData> | undefined;
+            /**
+             * Gets an edge by its id
+             */
+            (linkId: LinkId): Link<LinkData> | undefined;
+        }
 
         /**
          * Checks if link is present in the graph 
          */
-        hasLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link<LinkData> | undefined
+        hasLink: {
+            /**
+             * Checks an edge between two nodes
+             */
+            (fromNodeId: NodeId, toNodeId: NodeId): Link<LinkData> | undefined;
+            /**
+             * Checks an edge by its id
+             */
+            (linkId: LinkId): Link<LinkData> | undefined;
+        }
 
         /**
          * Returns number of nodes in the graph
