@@ -1,4 +1,32 @@
-Node v12.4.0
+## Node v22.12.0
+
+This is done on a solid Apple M4 Max, so can't compare to the previous results
+
+> node edge-iteration.js
+Edge iteration x 1,887 ops/sec ±0.49% (100 runs sampled)
+edge iteration sum weight 49950000
+edge iteration multigraph weight 0
+Edge iteration for multigraph x 1,690 ops/sec ±0.68% (97 runs sampled)
+edge iteration sum weight 49950000
+edge iteration multigraph weight 49950000
+
+> node graph-construction.js
+Adding 5,000 edges x 1,065 ops/sec ±0.27% (98 runs sampled)
+Adding 5,000 multigraph edges x 689 ops/sec ±0.77% (94 runs sampled)
+Adding 5,000 random edges x 614 ops/sec ±0.45% (93 runs sampled)
+Adding 5,000 random edges to multigraph x 451 ops/sec ±0.59% (94 runs sampled)
+Adding 5,000 random edges and randomly removing them x 288 ops/sec ±0.76% (91 runs sampled)
+Adding 5,000 random edges to multigraph and randomly removing them x 139 ops/sec ±1.38% (82 runs sampled)
+Removing all edges one by one from 5k graph x 426 ops/sec ±0.74% (91 runs sampled)
+Removing all edges one by one from 5k multigraph graph x 338 ops/sec ±0.33% (92 runs sampled)
+
+> node perf/node-iteration.js
+forEachNode x 48,192 ops/sec ±0.95% (95 runs sampled)
+49995000
+Fastest is forEachNode
+
+
+## Node v12.4.0
 
 > node perf/edge-iteration.js
 Edge iteration x 626 ops/sec ±1.36% (86 runs sampled)
