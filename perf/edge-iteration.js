@@ -22,6 +22,9 @@ suite.add('Edge iteration', function() {
   function addUpWeight(link) {
     edgeIterationSumWeight += link.data;
   }
+}).on('complete', function() {
+  // Print checksum to make sure we are not optimizing out the loop:
+  console.log('edge iteration sum weight', edgeIterationSumWeight);
 });
 
 suite.add('Edge iteration for multigraph', function() {
@@ -40,14 +43,14 @@ suite.add('Edge iteration for multigraph', function() {
   function addUpWeight(link) {
     edgeIterationMultigraph += link.data;
   }
+}).on('complete', function() {
+  // Print checksum to make sure we are not optimizing out the loop:
+  console.log('edge iteration multigraph weight', edgeIterationMultigraph);
 });
 
 
 suite.on('cycle', function(event) {
   console.log(String(event.target));
-  console.log('edge iteration sum weight', edgeIterationSumWeight);
-  console.log('edge iteration multigraph weight', edgeIterationMultigraph);
 })
 // run async
 .run({ 'async': true });
-
