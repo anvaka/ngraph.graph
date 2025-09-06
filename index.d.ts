@@ -1,4 +1,4 @@
-// Type definitions for ngraph.graph v20.0.0
+// Type definitions for ngraph.graph v20.0.1
 // Project: https://github.com/anvaka/ngraph.graph
 // Definitions by: Nathan Westlake <https://github.com/CorayThan> and Anvaka <https://github.com/anvaka>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
@@ -8,7 +8,7 @@
  */
 declare module "ngraph.graph" {
     import { EventedType } from 'ngraph.events'
-    
+
     export type NodeId = string | number
     export type LinkId = string
 
@@ -54,7 +54,7 @@ declare module "ngraph.graph" {
          * Link instance is referentially equal throughout the API.
          */
         links: Set<Link<any>> | null,
-        
+
         /**
          * Associated data connected to this node.
          */
@@ -65,6 +65,10 @@ declare module "ngraph.graph" {
      * A graph data structure
      */
     export interface Graph<NodeData = any, LinkData = any> {
+        /**
+         * Internal version of the library surfaced for duck-typing hints.
+         */
+        version: number
         /**
          * Adds a new node to the graph. If node with such id already exists
          * its data is overwritten with the new data
@@ -88,6 +92,10 @@ declare module "ngraph.graph" {
          * Returns true if link is found and removed. False otherwise.
          */
         removeLink: (link: Link<LinkData>) => boolean
+        /**
+         * Overload: remove link by from/to node ids.
+         */
+        removeLink: (fromNodeId: NodeId, toNodeId: NodeId) => boolean
 
         /**
          * Removes node by node id. Returns true if node was removed,
@@ -131,6 +139,10 @@ declare module "ngraph.graph" {
          * Returns number of links (edges) in the graph
          */
         getLinksCount: () => number
+        /**
+         * Synonym of getLinkCount()
+         */
+        getEdgeCount: () => number
 
         /**
          * Returns number of links (edges) in the graph
@@ -160,7 +172,7 @@ declare module "ngraph.graph" {
          * the callback will receive nodes on the `link.toId` end. Otherwise callback will
          * receive nodes on either `.fromId` or `.toId`, depending on the `nodeId` argument.
          */
-        forEachLinkedNode: (nodeId: NodeId, callbackPerNode: (otherNode: Node<NodeData>, link: Link<LinkData>) => void, oriented: boolean) => void
+        forEachLinkedNode: (nodeId: NodeId, callbackPerNode: (otherNode: Node<NodeData>, link: Link<LinkData>) => void, oriented?: boolean) => void
 
         /**
          * Suspend all notifications about graph changes until

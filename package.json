@@ -3,6 +3,7 @@
   "version": "20.0.1",
   "description": "graph data structure",
   "main": "index.js",
+  "types": "index.d.ts",
   "jsdelivr": "dist/ngraph.graph.min.js",
   "unpkg": "dist/ngraph.graph.min.js",
   "scripts": {
