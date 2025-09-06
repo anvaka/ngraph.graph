@@ -21,18 +21,16 @@ var eventify = require('ngraph.events');
  * Creates a new graph
  */
 function createGraph(options) {
-  // Graph structure is maintained as dictionary of nodes
-  // and array of links. Each node has 'links' property which
-  // hold all links related to that node. And general links
-  // array is used to speed up all links enumeration. This is inefficient
-  // in terms of memory, but simplifies coding.
+  // Graph structure is maintained as Map of nodes and Map of links.
+  // Each node has 'links' (Set) which holds all incident links. This is
+  // efficient for lookups and iteration, while keeping the API simple.
   options = options || {};
   if ('uniqueLinkId' in options) {
     console.warn(
       'ngraph.graph: Starting from version 0.14 `uniqueLinkId` is deprecated.\n' +
       'Use `multigraph` option instead\n',
       '\n',
-      'Note: there is also change in default behavior: From now on each graph\n'+
+      'Note: there is also change in default behavior: From now on each graph\n' +
       'is considered to be not a multigraph by default (each edge is unique).'
     );
 
@@ -47,11 +45,11 @@ function createGraph(options) {
   if (typeof Map !== 'function') {
     // TODO: Should we polyfill it ourselves? We don't use much operations there..
     throw new Error('ngraph.graph requires `Map` to be defined. Please polyfill it before using ngraph');
-  } 
+  }
 
   var nodes = new Map(); // nodeId => Node
   var links = new Map(); // linkId => Link
-    // Hash of multi-edges. Used to track ids of edges between same nodes
+  // Hash of multi-edges. Used to track ids of edges between same nodes
   var multiEdges = {};
   var suspendEvents = 0;
 
@@ -148,7 +146,7 @@ function createGraph(options) {
     getLinkCount: getLinkCount,
 
     /**
-     * Gets total number of links in the graph.
+     * Synonym for `getLinkCount()`
      */
     getEdgeCount: getLinkCount,
 
@@ -156,7 +154,7 @@ function createGraph(options) {
      * Synonym for `getLinkCount()`
      */
     getLinksCount: getLinkCount,
-    
+
     /**
      * Synonym for `getNodeCount()`
      */
@@ -450,7 +448,7 @@ function createGraph(options) {
 
   function clear() {
     enterModification();
-    forEachNode(function(node) {
+    forEachNode(function (node) {
       removeNode(node.id);
     });
     exitModification();
@@ -517,7 +515,7 @@ function createGraph(options) {
 
   // we will not fire anything until users of this library explicitly call `on()`
   // method.
-  function noop() {}
+  function noop() { }
 
   // Enter, Exit modification allows bulk graph updates without firing events.
   function enterModificationReal() {
