@@ -161,7 +161,7 @@ g.on('changed', function(changes) {
   console.dir(changes); // prints array of change records
 });
 
-g.add(42); // this will trigger 'changed event'
+g.addNode(42); // this will trigger 'changed' event
 ```
 
 Each change record holds information:
