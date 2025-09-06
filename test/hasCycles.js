@@ -1,8 +1,8 @@
-var test = require('tap').test;
-var hasCycle = require('../examples/hasCycles');
-var createGraph = require('..');
+import { test, expect } from 'vitest';
+import hasCycle from '../examples/hasCycles';
+import createGraph from '..';
 
-test('can detect cycles loops', function(t) {
+test('can detect cycles loops', function() {
   // our graph has three components
   var graph = createGraph();
   graph.addLink(1, 2);
@@ -14,11 +14,10 @@ test('can detect cycles loops', function(t) {
   graph.addLink(9, 9);
 
   // lets verify it:
-  t.ok(hasCycle(graph), 'cycle found');
-  t.end();
+  expect(!!hasCycle(graph)).toBe(true);
 });
 
-test('can detect simple cycles', function(t) {
+test('can detect simple cycles', function() {
   var graph = createGraph();
   graph.addLink(1, 2);
   graph.addLink(2, 3);
@@ -26,18 +25,15 @@ test('can detect simple cycles', function(t) {
   graph.addLink(6, 1);
 
   // lets verify it:
-  t.ok(hasCycle(graph), 'cycle found');
-  t.end();
+  expect(!!hasCycle(graph)).toBe(true);
 });
 
-test('can detect when no cycles', function(t) {
+test('can detect when no cycles', function() {
   var graph = createGraph();
   graph.addLink(1, 2);
   graph.addLink(2, 3);
   graph.addLink(3, 6);
 
   // lets verify it:
-  console.log(hasCycle(graph));
-  t.ok(!hasCycle(graph), 'cycle should not be found');
-  t.end();
+  expect(!!hasCycle(graph)).toBe(false);
 });

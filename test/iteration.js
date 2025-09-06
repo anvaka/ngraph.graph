@@ -1,47 +1,40 @@
-var test = require('tap').test,
-  createGraph = require('..');
+import { test, expect } from 'vitest';
+import createGraph from '..';
 
-test('forEachLinkedNode respects orientation', function(t) {
-  t.plan(3);
+test('forEachLinkedNode respects orientation', function() {
 
   var graph = createGraph();
   graph.addLink(1, 2);
   graph.addLink(2, 3);
   var oriented = true;
   graph.forEachLinkedNode(2, function(node, link) {
-    t.ok(link.toId === 3, 'Only 3 is connected to node 2, when traversal is oriented');
+  expect(link.toId === 3).toBe(true);
   }, oriented);
 
   graph.forEachLinkedNode(2, function(node, link) {
-    t.ok(link.toId === 3 || link.toId === 2, 'both incoming and outgoing links are visited');
+  expect(link.toId === 3 || link.toId === 2).toBe(true);
   }, !oriented);
-
-  t.end();
 });
 
-test('forEachLinkedNode handles self-loops', function(t) {
-  t.plan(1);
+test('forEachLinkedNode handles self-loops', function() {
 
   var graph = createGraph();
   graph.addLink(1, 1);
   // we should visit exactly one time
   graph.forEachLinkedNode(1, function(node, link) {
-    t.ok(link.fromId === 1 && link.toId === 1, 'Link 1 is visited once');
+  expect(link.fromId === 1 && link.toId === 1).toBe(true);
   });
-
-  t.end();
 });
 
-test('forEachLinkedNode will not crash on invalid node id', function(t) {
-  t.plan(0);
+test('forEachLinkedNode will not crash on invalid node id', function() {
   var graph = createGraph();
   graph.addLink(1, 2);
   graph.forEachLinkedNode(3, function() {
-    t.notOk(true, 'This code will never be executed');
+  throw new Error('This code will never be executed');
   });
 });
 
-test('forEachLinkedNode can quit fast for oriented graphs', function(t) {
+test('forEachLinkedNode can quit fast for oriented graphs', function() {
   var graph = createGraph();
   var oriented = true;
   graph.addLink(1, 2);
@@ -49,15 +42,13 @@ test('forEachLinkedNode can quit fast for oriented graphs', function(t) {
 
   var visited = 0;
   graph.forEachLinkedNode(1, function() {
-    t.ok(true, 'Visited first link');
     visited += 1;
     return true; // We want to stop right now!
   }, oriented);
-  t.equal(visited, 1, 'One link is visited');
-  t.end();
+  expect(visited).toBe(1);
 });
 
-test('forEachLinkedNode can quit fast for non-oriented graphs', function(t) {
+test('forEachLinkedNode can quit fast for non-oriented graphs', function() {
   var graph = createGraph();
   var oriented = false;
   graph.addLink(1, 2);
@@ -65,16 +56,14 @@ test('forEachLinkedNode can quit fast for non-oriented graphs', function(t) {
 
   var visited = 0;
   graph.forEachLinkedNode(1, function() {
-    t.ok(true, 'Visited first link');
     visited += 1;
     return true; // We want to stop right now!
   }, oriented);
 
-  t.equal(visited, 1, 'One link is visited');
-  t.end();
+  expect(visited).toBe(1);
 });
 
-test('forEachLinkedNode returns quitFast flag', function(t) {
+test('forEachLinkedNode returns quitFast flag', function() {
   var graph = createGraph();
   graph.addLink(1, 2);
   graph.addLink(1, 3);
@@ -83,67 +72,58 @@ test('forEachLinkedNode returns quitFast flag', function(t) {
     return true; // Stop right now.
   });
 
-  t.ok(fastQuit, 'Fast quit triggered when callback opted out');
+  expect(!!fastQuit).toBe(true);
 
   var notSoFast = graph.forEachLinkedNode(1, function() { });
-  t.notOk(notSoFast, 'Fast quit is not triggered when all elements visited');
-  t.end();
+  expect(!!notSoFast).toBe(false);
 });
 
-test('forEachLink visits each link', function(t) {
-  t.plan(1);
+test('forEachLink visits each link', function() {
   var graph = createGraph();
   graph.addLink(1, 2);
   graph.forEachLink(function(link) {
-    t.ok(link.fromId === 1 && link.toId === 2, 'Link is here');
+  expect(link.fromId === 1 && link.toId === 2).toBe(true);
   });
-  t.end();
 });
 
-test('forEachLink will not crash on empty callback', function(t) {
+test('forEachLink will not crash on empty callback', function() {
   var graph = createGraph();
   graph.addLink(1, 2);
   graph.forEachLink(); // didn't pass callback, no worries.
-  t.end();
 });
 
-test('forEachNode will stop when requested', function(t) {
-  t.plan(1);
+test('forEachNode will stop when requested', function() {
   var graph = createGraph();
   graph.addLink(1, 2);
   graph.forEachNode(function(node) {
-    t.equal(node.id, 1, 'We visit only one node');
+  expect(node.id).toBe(1);
     return true; // we want to stop now!
   });
-
-  t.end();
 });
 
-test('forEachNode returns fastQuit', function(t) {
+test('forEachNode returns fastQuit', function() {
   var graph = createGraph();
   graph.addLink(1, 2);
   var fastQuit = graph.forEachNode(function(node) {
-    t.equal(node.id, 1, 'We visit only one node');
+    expect(node.id).toBe(1);
     return true; // we want to stop now!
   }); // no callback? No worries
 
-  t.ok(fastQuit, 'fastQuit is set when callback opted out');
+  expect(!!fastQuit).toBe(true);
 
   var notSoFast = graph.forEachNode(function() { });
-  t.notOk(notSoFast, 'fastQuit is not set when all nodes visited');
-  t.end();
+  expect(!!notSoFast).toBe(false);
 });
 
-test('forEachNode throws when callback is not a function', function(t) {
+test('forEachNode throws when callback is not a function', function() {
   var graph = createGraph();
   graph.addLink(1, 2);
-  t.throws(function() {
+  expect(() => {
     graph.forEachNode('not a function');
-  });
-  t.end();
+  }).toThrow();
 });
 
-test('forEachLink stops when requested', function(t) {
+test('forEachLink stops when requested', function() {
   var graph = createGraph();
   graph.addLink(1, 2);
   graph.addLink(2, 3);
@@ -153,6 +133,5 @@ test('forEachLink stops when requested', function(t) {
     visitCount += 1;
     return true;
   });
-  t.equal(visitCount, 1, 'only one link visited');
-  t.end();
+  expect(visitCount).toBe(1);
 });

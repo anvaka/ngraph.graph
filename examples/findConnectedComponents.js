@@ -3,7 +3,7 @@
  * 
  * Created in response to https://github.com/anvaka/ngraph.graph/issues/18
  */
-module.exports = function findConnectedComponents(graph) {
+export default function findConnectedComponents(graph) {
   var nodeIdToComponentId = new Map();
 
   var connectedComponents = [];
@@ -40,7 +40,7 @@ module.exports = function findConnectedComponents(graph) {
   });
 
   return connectedComponents;
-};
+}
 
 function dfs(graph, startFromNodeId, visitor) {
   graph.forEachLinkedNode(startFromNodeId, function(otherNode) {

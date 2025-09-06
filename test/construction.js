@@ -1,88 +1,78 @@
-var test = require('tap').test,
-  createGraph = require('..');
+import { test, expect, describe } from 'vitest';
+import createGraph from '..';
 
-test('add node adds node', function(t) {
+test('add node adds node', function() {
   var graph = createGraph();
   var customData = '31337';
 
   var node = graph.addNode(1, customData);
 
-  t.equal(graph.getNodesCount(), 1, 'exactly one node');
-  t.equal(graph.getLinksCount(), 0, 'no links');
-  t.equal(graph.getNode(1), node, 'invalid node returned by addNode (or getNode)');
-  t.equal(node.data, customData, 'data was not set properly');
-  t.equal(node.id, 1, 'node id was not set properly');
-  t.end();
+  expect(graph.getNodesCount()).toBe(1);
+  expect(graph.getLinksCount()).toBe(0);
+  expect(graph.getNode(1)).toBe(node);
+  expect(node.data).toBe(customData);
+  expect(node.id).toBe(1);
 });
 
-test('hasNode checks node', function(t) {
+test('hasNode checks node', function() {
   var graph = createGraph();
 
   graph.addNode(1);
 
-  t.ok(graph.hasNode(1), 'node is there');
-  t.notOk(graph.hasNode(2), 'should not be here');
-  t.end();
+  expect(!!graph.hasNode(1)).toBe(true);
+  expect(!!graph.hasNode(2)).toBe(false);
 });
 
-test('hasLink checks links', function (t) {
+test('hasLink checks links', function () {
   var graph = createGraph();
   graph.addLink(1, 2);
   var link12 = graph.hasLink(1, 2);
-  t.ok(link12.fromId === 1 && link12.toId === 2, 'link is found');
+  expect(link12.fromId === 1 && link12.toId === 2).toBe(true);
 
   // this is somewhat doubtful... has link will return null, but forEachLinkedNode
   // will actually iterate over this link. Not sure how to have consistency here
   // for now documenting behavior in the test:
   var noLink = graph.hasLink(2, 1);
-  t.notOk(noLink, 'hasLink is always directional');
+  expect(!!noLink).toBe(false);
 
   var obviousNo = graph.hasLink();
-  t.notOk(obviousNo, 'No links there');
-  t.end();
+  expect(!!obviousNo).toBe(false);
 });
 
-test('hasLink is the same as getLink', function (t) {
+test('hasLink is the same as getLink', function () {
   var graph = createGraph();
 
-  t.equal(graph.getLink, graph.hasLink, 'hasLink is synonym for getLink');
-  t.end();
+  expect(graph.getLink).toBe(graph.hasLink);
 });
 
-test('it considers uniqueLinkId as multigraph', function (t) {
+test('it considers uniqueLinkId as multigraph', function () {
   var options = {uniqueLinkId: true};
   createGraph(options);
-  t.equal(options.multigraph, true, 'multigraph is set');
-  t.end();
+  expect(options.multigraph).toBe(true);
 });
 
-test('it throw if no node id is passed', function(t) {
+test('it throw if no node id is passed', function() {
   var graph = createGraph();
-  t.throws(function() {
+  expect(() => {
     graph.addNode(); // no id, should throw
-  }, 'It throws on undefined node');
-
-  t.end();
+  }).toThrow();
 });
 
-test('it fires update event when node is updated', function(t) {
-  t.plan(3);
+test('it fires update event when node is updated', function() {
   var graph = createGraph();
   graph.addNode(1, 'hello');
   graph.on('changed', checkChangedEvent);
   graph.addNode(1, 'world');
 
-  t.end();
-
   function checkChangedEvent(changes) {
     var change = changes[0];
-    t.equal(change.node.id, 1);
-    t.equal(change.node.data, 'world');
-    t.equal(change.changeType, 'update');
+  expect(change.node.id).toBe(1);
+  expect(change.node.data).toBe('world');
+  expect(change.changeType).toBe('update');
   }
 });
 
-test('it can add node with id similar to reserved prototype property', function(t) {
+test('it can add node with id similar to reserved prototype property', function() {
   var graph = createGraph();
   graph.addNode('constructor');
   graph.addLink('watch', 'constructor');
@@ -92,48 +82,43 @@ test('it can add node with id similar to reserved prototype property', function(
     iterated += 1;
   });
 
-  t.ok(graph.hasLink('watch', 'constructor'));
-  t.equal(graph.getLinksCount(), 1, 'one link');
-  t.equal(iterated, 2, 'has two nodes');
-  t.end();
+  expect(!!graph.hasLink('watch', 'constructor')).toBe(true);
+  expect(graph.getLinksCount()).toBe(1);
+  expect(iterated).toBe(2);
 });
 
-test('add link adds link', function(t) {
+test('add link adds link', function() {
   var graph = createGraph();
 
   var link = graph.addLink(1, 2),
     firstNodeLinks = graph.getLinks(1),
     secondNodeLinks = graph.getLinks(2);
 
-  t.equal(graph.getNodesCount(), 2, 'Two nodes');
-  t.equal(graph.getLinksCount(), 1, 'One link');
-  t.equal(firstNodeLinks.size, 1, 'number of links of the first node is wrong');
-  t.equal(secondNodeLinks.size, 1, 'number of links of the second node is wrong');
-  t.equal(link, Array.from(firstNodeLinks)[0], 'invalid link in the first node');
-  t.equal(link, Array.from(secondNodeLinks)[0], 'invalid link in the second node');
-  t.end();
+  expect(graph.getNodesCount()).toBe(2);
+  expect(graph.getLinksCount()).toBe(1);
+  expect(firstNodeLinks.size).toBe(1);
+  expect(secondNodeLinks.size).toBe(1);
+  expect(Array.from(firstNodeLinks)[0]).toBe(link);
+  expect(Array.from(secondNodeLinks)[0]).toBe(link);
 });
 
-test('it can add multi-edges', function (t) {
-  t.plan(5);
+test('it can add multi-edges', function () {
   var graph = createGraph({multigraph: true});
   graph.addLink(1, 2, 'first');
   graph.addLink(1, 2, 'second');
   graph.addLink(1, 2, 'third');
 
-  t.equal(graph.getLinksCount(), 3, 'three links!');
-  t.equal(graph.getNodesCount(), 2, 'Two nodes');
+  expect(graph.getLinksCount()).toBe(3);
+  expect(graph.getNodesCount()).toBe(2);
 
   graph.forEachLinkedNode(1, function (otherNode, link) {
-    t.ok(link.data === 'first' || link.data === 'second' || link.data === 'third', 'Link is here');
+    expect(['first', 'second', 'third']).toContain(link.data);
   });
-
-  t.end();
 });
 
-test('it can produce unique link ids', function (t) {
+describe('it can produce unique link ids', function () {
   // eslint-disable-next-line no-shadow
-  t.test('by default links are de-duped', function (t) {
+  test('by default links are de-duped', function () {
     var seen = {};
     var graph = createGraph();
     graph.addLink(1, 2, 'first');
@@ -142,18 +127,17 @@ test('it can produce unique link ids', function (t) {
     graph.forEachLink(verifyLinksAreNotUnique);
 
     var link = graph.getLink(1, 2);
-    t.equal(seen[link.id], 1, 'Link 1->2 seen 1 time');
-    t.equal(link.data, 'third', 'Last link wins');
+    expect(seen[link.id]).toBe(1);
+    expect(link.data).toBe('third');
 
     // eslint-disable-next-line no-shadow
     function verifyLinksAreNotUnique(link) {
       seen[link.id] = (seen[link.id] || 0) + 1;
     }
-    t.end();
   });
 
   // eslint-disable-next-line no-shadow
-  t.test('You can create multigraph', function (t) {
+  test('You can create multigraph', function () {
     var graph = createGraph({
       multigraph: true
     });
@@ -163,214 +147,187 @@ test('it can produce unique link ids', function (t) {
     graph.addLink(1, 2, 'second');
     graph.addLink(1, 2, 'third');
     graph.forEachLink(verifyLinkIsUnique);
-    t.equal(graph.getLinksCount(), 3, 'All three links are here');
-    t.end();
+    expect(graph.getLinksCount()).toBe(3);
 
     function verifyLinkIsUnique(link) {
-      t.notOk(seen[link.id], link.id + ' is unique');
+      expect(!!seen[link.id]).toBe(false);
       seen[link.id] = true;
     }
   });
-
-  t.end();
 });
 
-test('add one node fires changed event', function(t) {
-  t.plan(3);
+test('add one node fires changed event', function() {
   var graph = createGraph();
   var testNodeId = 'hello world';
 
   graph.on('changed', function(changes) {
-    t.ok(changes && changes.length === 1, "Only one change should be recorded");
-    t.equal(changes[0].node.id, testNodeId, "Wrong node change notification");
-    t.equal(changes[0].changeType, 'add', "Add change type expected.");
+  expect(!!(changes && changes.length === 1)).toBe(true);
+  expect(changes[0].node.id).toBe(testNodeId);
+  expect(changes[0].changeType).toBe('add');
   });
 
   graph.addNode(testNodeId);
-
-  t.end();
 });
 
-test('add link fires changed event', function(t) {
-  t.plan(4);
+test('add link fires changed event', function() {
   var graph = createGraph();
   var fromId = 1,
     toId = 2;
 
   graph.on('changed', function(changes) {
-    t.ok(changes && changes.length === 3, "Three change should be recorded: node, node and link");
-    t.equal(changes[2].link.fromId, fromId, "Wrong link from Id");
-    t.equal(changes[2].link.toId, toId, "Wrong link toId");
-    t.equal(changes[2].changeType, 'add', "Add change type expected.");
+  expect(!!(changes && changes.length === 3)).toBe(true);
+  expect(changes[2].link.fromId).toBe(fromId);
+  expect(changes[2].link.toId).toBe(toId);
+  expect(changes[2].changeType).toBe('add');
   });
 
   graph.addLink(fromId, toId);
-  t.end();
 });
 
-test('remove isolated node remove it', function(t) {
+test('remove isolated node remove it', function() {
   var graph = createGraph();
 
   graph.addNode(1);
   graph.removeNode(1);
 
-  t.equal(graph.getNodesCount(), 0, 'Remove operation failed');
-  t.end();
+  expect(graph.getNodesCount()).toBe(0);
 });
 
-test('supports plural methods', function(t) {
+test('supports plural methods', function() {
   var graph = createGraph();
 
   graph.addLink(1, 2);
 
-  t.equal(graph.getNodeCount(), 2, 'two nodes are there');
-  t.equal(graph.getLinkCount(), 1, 'two nodes are there');
+  expect(graph.getNodeCount()).toBe(2);
+  expect(graph.getLinkCount()).toBe(1);
 
-  t.equal(graph.getNodesCount(), 2, 'two nodes are there');
-  t.equal(graph.getLinksCount(), 1, 'two nodes are there');
-
-  t.end();
+  expect(graph.getNodesCount()).toBe(2);
+  expect(graph.getLinksCount()).toBe(1);
 });
 
-test('remove link removes it', function(t) {
-  t.plan(5);
+test('remove link removes it', function() {
 
   var graph = createGraph();
   var link = graph.addLink(1, 2);
 
   var linkIsRemoved = graph.removeLink(link);
 
-  t.equal(graph.getNodesCount(), 2, 'remove link should not remove nodes');
-  t.equal(graph.getLinksCount(), 0, 'No Links');
-  t.equal(graph.getLinks(1).size, 0, 'link should be removed from the first node');
-  t.equal(graph.getLinks(2).size, 0, 'link should be removed from the second node');
-  t.ok(linkIsRemoved, 'Link removal is successful');
+  expect(graph.getNodesCount()).toBe(2);
+  expect(graph.getLinksCount()).toBe(0);
+  expect(graph.getLinks(1).size).toBe(0);
+  expect(graph.getLinks(2).size).toBe(0);
+  expect(!!linkIsRemoved).toBe(true);
 
   graph.forEachLink(function() {
-    test.ok(false, 'No links should be in graph');
+    throw new Error('No links should be in graph');
   });
-
-  t.end();
 });
 
-test('it can remove link by from/to ids', function(t) {
+test('it can remove link by from/to ids', function() {
   var graph = createGraph();
   graph.addLink(1, 2);
 
   var linkIsRemoved = graph.removeLink(1, 2);
 
-  t.equal(graph.getNodesCount(), 2, 'remove link should not remove nodes');
-  t.equal(graph.getLinksCount(), 0, 'No Links');
-  t.equal(graph.getLinks(1).size, 0, 'link should be removed from the first node');
-  t.equal(graph.getLinks(2).size, 0, 'link should be removed from the second node');
-  t.ok(linkIsRemoved, 'Link removal is successful');
+  expect(graph.getNodesCount()).toBe(2);
+  expect(graph.getLinksCount()).toBe(0);
+  expect(graph.getLinks(1).size).toBe(0);
+  expect(graph.getLinks(2).size).toBe(0);
+  expect(!!linkIsRemoved).toBe(true);
 
   graph.forEachLink(function() {
-    test.ok(false, 'No links should be in graph');
+    throw new Error('No links should be in graph');
   });
-
-  t.end();
 });
 
-test('remove link returns false if no link removed', function (t) {
+test('remove link returns false if no link removed', function () {
   var graph = createGraph();
 
   graph.addLink(1, 2);
   var result = graph.removeLink('blah');
-  t.notOk(result, 'Link is not removed');
+  expect(!!result).toBe(false);
 
   var alsoNo = graph.removeLink();
-  t.notOk(alsoNo, 'No link - no removal');
-  t.end();
+  expect(!!alsoNo).toBe(false);
 });
 
-test('remove isolated node fires changed event', function(t) {
-  t.plan(4);
+test('remove isolated node fires changed event', function() {
   var graph = createGraph();
   graph.addNode(1);
 
   graph.on('changed', function(changes) {
-    t.ok(changes && changes.length === 1, "One change should be recorded: node removed");
-    t.equal(changes[0].node.id, 1, "Wrong node Id");
-    t.equal(changes[0].changeType, 'remove', "'remove' change type expected.");
+    expect(!!(changes && changes.length === 1)).toBe(true);
+    expect(changes[0].node.id).toBe(1);
+    expect(changes[0].changeType).toBe('remove');
   });
 
   var result = graph.removeNode(1);
-  t.ok(result, 'node is removed');
-  t.end();
+  expect(!!result).toBe(true);
 });
 
-test('remove link fires changed event', function(t) {
-  t.plan(3);
+test('remove link fires changed event', function() {
   var graph = createGraph();
   var link = graph.addLink(1, 2);
 
   graph.on('changed', function(changes) {
-    t.ok(changes && changes.length === 1, "One change should be recorded: link removed");
-    t.equal(changes[0].link, link, "Wrong link removed");
-    t.equal(changes[0].changeType, 'remove', "'remove' change type expected.");
+  expect(!!(changes && changes.length === 1)).toBe(true);
+  expect(changes[0].link).toBe(link);
+  expect(changes[0].changeType).toBe('remove');
   });
 
   graph.removeLink(link);
-  t.end();
 });
 
-test('remove linked node fires changed event', function(t) {
-  t.plan(5);
+test('remove linked node fires changed event', function() {
   var graph = createGraph(),
     link = graph.addLink(1, 2),
     nodeIdToRemove = 1;
 
   graph.on('changed', function(changes) {
-    t.ok(changes && changes.length === 2, "Two changes should be recorded: link and node removed");
-    t.equal(changes[0].link, link, "Wrong link removed");
-    t.equal(changes[0].changeType, 'remove', "'remove' change type expected.");
-    t.equal(changes[1].node.id, nodeIdToRemove, "Wrong node removed");
-    t.equal(changes[1].changeType, 'remove', "'remove' change type expected.");
+  expect(!!(changes && changes.length === 2)).toBe(true);
+  expect(changes[0].link).toBe(link);
+  expect(changes[0].changeType).toBe('remove');
+  expect(changes[1].node.id).toBe(nodeIdToRemove);
+  expect(changes[1].changeType).toBe('remove');
   });
 
   graph.removeNode(nodeIdToRemove);
-  t.end();
 });
 
-test('remove node with many links removes them all', function(t) {
+test('remove node with many links removes them all', function() {
   var graph = createGraph();
   graph.addLink(1, 2);
   graph.addLink(1, 3);
 
   graph.removeNode(1);
 
-  t.equal(graph.getNodesCount(), 2, 'remove link should remove one node only');
-  t.equal(graph.getLinks(1), null, 'link should be removed from the first node');
-  t.equal(graph.getLinks(2).size, 0, 'link should be removed from the second node');
-  t.equal(graph.getLinks(3).size, 0, 'link should be removed from the third node');
+  expect(graph.getNodesCount()).toBe(2);
+  expect(graph.getLinks(1)).toBe(null);
+  expect(graph.getLinks(2).size).toBe(0);
+  expect(graph.getLinks(3).size).toBe(0);
   graph.forEachLink(function() {
-    test.ok(false, 'No links should be in graph');
+    throw new Error('No links should be in graph');
   });
-
-  t.end();
 });
 
-test('remove node returns false when no node removed', function (t) {
+test('remove node returns false when no node removed', function () {
   var graph = createGraph();
   graph.addNode('hello');
   var result = graph.removeNode('blah');
-  t.notOk(result, 'No "blah" node');
-  t.end();
+  expect(!!result).toBe(false);
 });
 
-test('clearGraph clears graph', function (t) {
+test('clearGraph clears graph', function () {
   var graph = createGraph();
   graph.addNode('hello');
   graph.addLink(1, 2);
   graph.clear();
 
-  t.equal(graph.getNodesCount(), 0, 'No nodes');
-  t.equal(graph.getLinksCount(), 0, 'No links');
-  t.end();
+  expect(graph.getNodesCount()).toBe(0);
+  expect(graph.getLinksCount()).toBe(0);
 });
 
-test('beginUpdate holds events', function(t) {
+test('beginUpdate holds events', function() {
   var graph = createGraph();
   var changedCount = 0;
   graph.on('changed', function () {
@@ -378,8 +335,7 @@ test('beginUpdate holds events', function(t) {
   });
   graph.beginUpdate();
   graph.addNode(1);
-  t.equal(changedCount, 0, 'Begin update freezes updates until `endUpdate()`');
+  expect(changedCount).toBe(0);
   graph.endUpdate();
-  t.equal(changedCount, 1, 'event is fired only after endUpdate()');
-  t.end();
+  expect(changedCount).toBe(1);
 });

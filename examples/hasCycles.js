@@ -1,4 +1,4 @@
-module.exports = function hasCycles(graph) {
+export default function hasCycles(graph) {
   var visited = new Set();
 
   var hasCycle = false;
@@ -17,7 +17,7 @@ module.exports = function hasCycles(graph) {
   });
 
   return hasCycle;
-};
+}
 
 function dfs(graph, startFromNodeId, visitor) {
   const queue = [startFromNodeId];

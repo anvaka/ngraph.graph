@@ -2,13 +2,16 @@
   "name": "ngraph.graph",
   "version": "20.0.1",
   "description": "graph data structure",
-  "main": "index.js",
+  "type": "module",
+  "main": "dist/ngraph.graph.umd.js",
   "types": "index.d.ts",
-  "jsdelivr": "dist/ngraph.graph.min.js",
-  "unpkg": "dist/ngraph.graph.min.js",
+  "jsdelivr": "dist/ngraph.graph.umd.js",
+  "unpkg": "dist/ngraph.graph.umd.js",
   "scripts": {
-    "build": "browserify index.js -s createGraph -o dist/ngraph.graph.js && uglifyjs dist/ngraph.graph.js -o dist/ngraph.graph.min.js",
-    "test": "tap --allow-incomplete-coverage test/*.js"
+    "build": "vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "repository": {
     "type": "git",
@@ -32,14 +35,23 @@
     "url": "https://github.com/anvaka/ngraph.graph/issues"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^3.2.4",
     "benchmark": "^2.1.4",
-    "browserify": "^17.0.0",
-    "eslint": "^7.25.0",
+    "eslint": "^9.9.0",
     "ngraph.random": "^1.1.0",
-    "tap": "^18.1.4",
-    "uglify-js": "^3.13.5"
+    "vite": "^7.1.4",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "ngraph.events": "^1.2.1"
-  }
+  },
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js",
+      "require": "./dist/ngraph.graph.umd.js"
+    },
+    "./dist/*": "./dist/*"
+  },
+  "sideEffects": false
 }

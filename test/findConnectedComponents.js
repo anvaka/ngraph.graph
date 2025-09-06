@@ -1,8 +1,8 @@
-var test = require('tap').test;
-var findConnectedComponents = require('../examples/findConnectedComponents');
-var createGraph = require('..');
+import { test, expect } from 'vitest';
+import findConnectedComponents from '../examples/findConnectedComponents';
+import createGraph from '..';
 
-test('can find connected components', function(t) {
+test('can find connected components', function() {
   // our graph has three components
   var graph = createGraph();
   graph.addLink(1, 2);
@@ -15,11 +15,9 @@ test('can find connected components', function(t) {
 
   // lets verify it:
   var components = findConnectedComponents(graph);
-  t.equal(components.length, 4, 'all components found');
-  t.same(components[0], [1, 2, 3], 'first component found');
-  t.same(components[1], [5, 6], 'second component found');
-  t.same(components[2], [8], 'third component found');
-  t.same(components[3], [9], 'fourth component found');
-
-  t.end();
+  expect(components.length).toBe(4);
+  expect(components[0]).toEqual([1, 2, 3]);
+  expect(components[1]).toEqual([5, 6]);
+  expect(components[2]).toEqual([8]);
+  expect(components[3]).toEqual([9]);
 });

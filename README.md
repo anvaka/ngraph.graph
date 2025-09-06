@@ -18,10 +18,17 @@ npm install ngraph.graph
 Or download from CDN:
 
 ``` html
-<script src='https://unpkg.com/ngraph.graph@20.0.1/dist/ngraph.graph.min.js'></script>
+<script src='https://unpkg.com/ngraph.graph@20.1.0/dist/ngraph.graph.umd.js'></script>
 ```
 
 If you download from CDN the library will be available under `createGraph` global name.
+
+You can also import it as an ES module:
+
+```js
+import createGraph from 'ngraph.graph';
+const g = createGraph();
+```
 
 ## Creating a graph
 Create a graph with no edges and no nodes:
