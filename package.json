@@ -43,7 +43,7 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "ngraph.events": "^1.2.1"
+    "ngraph.events": "^1.4.0"
   },
   "exports": {
     ".": {
