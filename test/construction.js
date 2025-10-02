@@ -45,6 +45,13 @@ test('hasLink is the same as getLink', function () {
   expect(graph.getLink).toBe(graph.hasLink);
 });
 
+test('getLinkById gets link by id', function () {
+  var graph = createGraph();
+  var link = graph.addLink(1, 2);
+  var fetchedLink = graph.getLinkById(link.id);
+  expect(fetchedLink).toBe(link);
+});
+
 test('it considers uniqueLinkId as multigraph', function () {
   var options = {uniqueLinkId: true};
   createGraph(options);

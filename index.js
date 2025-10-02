@@ -246,7 +246,16 @@ function createGraph(options) {
      *
      * @returns link if there is one; undefined otherwise.
      */
-    getLink: getLink
+    getLink: getLink,
+
+    /**
+     * Gets a link by its id.
+     *
+     * @param {string} linkId link identifier
+     *
+     * @returns link if there is one; undefined otherwise.
+     */
+    getLinkById: getLinkById
   };
 
   // this will add `on()` and `fire()` methods.
@@ -443,6 +452,11 @@ function createGraph(options) {
   function getLink(fromNodeId, toNodeId) {
     if (fromNodeId === undefined || toNodeId === undefined) return undefined;
     return links.get(makeLinkId(fromNodeId, toNodeId));
+  }
+
+  function getLinkById(linkId) {
+    if (linkId === undefined) return undefined;
+    return links.get(linkId);
   }
 
   function clear() {
