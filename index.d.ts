@@ -121,6 +121,11 @@ declare module "ngraph.graph" {
         getLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link<LinkData> | undefined
 
         /**
+         * Returns a link by its id
+         */
+        getLinkById: (linkId: LinkId) => Link<LinkData> | undefined;
+
+        /**
          * Checks if link is present in the graph 
          */
         hasLink: (fromNodeId: NodeId, toNodeId: NodeId) => Link<LinkData> | undefined
