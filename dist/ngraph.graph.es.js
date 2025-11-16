@@ -1,63 +1,53 @@
+function Q(t) {
+  Z(t);
+  const i = X(t);
+  return t.on = i.on, t.off = i.off, t.fire = i.fire, t;
+}
 function X(t) {
-  return t && t.__esModule && Object.prototype.hasOwnProperty.call(t, "default") ? t.default : t;
-}
-var C, U;
-function Z() {
-  if (U) return C;
-  U = 1, C = function(i) {
-    f(i);
-    var a = t(i);
-    return i.on = a.on, i.off = a.off, i.fire = a.fire, i;
-  };
-  function t(u) {
-    var i = /* @__PURE__ */ Object.create(null);
-    return {
-      on: function(a, h, c) {
-        if (typeof h != "function")
-          throw new Error("callback is expected to be a function");
-        var v = i[a];
-        return v || (v = i[a] = []), v.push({ callback: h, ctx: c }), u;
-      },
-      off: function(a, h) {
-        var c = typeof a > "u";
-        if (c)
-          return i = /* @__PURE__ */ Object.create(null), u;
-        if (i[a]) {
-          var v = typeof h != "function";
-          if (v)
-            delete i[a];
-          else
-            for (var g = i[a], l = 0; l < g.length; ++l)
-              g[l].callback === h && g.splice(l, 1);
+  let i = /* @__PURE__ */ Object.create(null);
+  return {
+    on: function(o, f, h) {
+      if (typeof f != "function")
+        throw new Error("callback is expected to be a function");
+      let c = i[o];
+      return c || (c = i[o] = []), c.push({ callback: f, ctx: h }), t;
+    },
+    off: function(o, f) {
+      if (typeof o > "u")
+        return i = /* @__PURE__ */ Object.create(null), t;
+      if (i[o])
+        if (typeof f != "function")
+          delete i[o];
+        else {
+          const l = i[o];
+          for (let p = 0; p < l.length; ++p)
+            l[p].callback === f && l.splice(p, 1);
         }
-        return u;
-      },
-      fire: function(a) {
-        var h = i[a];
-        if (!h)
-          return u;
-        var c;
-        arguments.length > 1 && (c = Array.prototype.splice.call(arguments, 1));
-        for (var v = 0; v < h.length; ++v) {
-          var g = h[v];
-          g.callback.apply(g.ctx, c);
-        }
-        return u;
+      return t;
+    },
+    fire: function(o) {
+      const f = i[o];
+      if (!f)
+        return t;
+      let h;
+      arguments.length > 1 && (h = Array.prototype.slice.call(arguments, 1));
+      for (let c = 0; c < f.length; ++c) {
+        const l = f[c];
+        l.callback.apply(l.ctx, h);
       }
-    };
-  }
-  function f(u) {
-    if (!u)
-      throw new Error("Eventify cannot use falsy object as events subject");
-    for (var i = ["on", "fire", "off"], a = 0; a < i.length; ++a)
-      if (u.hasOwnProperty(i[a]))
-        throw new Error("Subject cannot be eventified, since it already has property '" + i[a] + "'");
-  }
-  return C;
+      return t;
+    }
+  };
 }
-var $ = Z();
-const j = /* @__PURE__ */ X($);
-function ee(t) {
+function Z(t) {
+  if (!t)
+    throw new Error("Eventify cannot use falsy object as events subject");
+  const i = ["on", "fire", "off"];
+  for (let o = 0; o < i.length; ++o)
+    if (t.hasOwnProperty(i[o]))
+      throw new Error("Subject cannot be eventified, since it already has property '" + i[o] + "'");
+}
+function $(t) {
   if (t = t || {}, "uniqueLinkId" in t && (console.warn(
     "ngraph.graph: Starting from version 0.14 `uniqueLinkId` is deprecated.\nUse `multigraph` option instead\n",
     `
@@ -66,7 +56,7 @@ function ee(t) {
 is considered to be not a multigraph by default (each edge is unique).`
   ), t.multigraph = t.uniqueLinkId), t.multigraph === void 0 && (t.multigraph = !1), typeof Map != "function")
     throw new Error("ngraph.graph requires `Map` to be defined. Please polyfill it before using ngraph");
-  var f = /* @__PURE__ */ new Map(), u = /* @__PURE__ */ new Map(), i = {}, a = 0, h = t.multigraph ? z : A, c = [], v = E, g = E, l = E, w = E, k = {
+  var i = /* @__PURE__ */ new Map(), o = /* @__PURE__ */ new Map(), f = {}, h = 0, c = t.multigraph ? P : T, l = [], p = y, w = y, k = y, L = y, g = {
     /**
      * Sometimes duck typing could be slow. Giving clients a hint about data structure
      * via explicit version number here:
@@ -82,7 +72,7 @@ is considered to be not a multigraph by default (each edge is unique).`
      *
      * @return {node} The newly added node or node with given id if it already exists.
      */
-    addNode: m,
+    addNode: N,
     /**
      * Adds a link to the graph. The function always create a new
      * link between two nodes. If one of the nodes does not exists
@@ -94,7 +84,7 @@ is considered to be not a multigraph by default (each edge is unique).`
      *
      * @return {link} The newly created link
      */
-    addLink: b,
+    addLink: R,
     /**
      * Removes link from the graph. If link does not exist does nothing.
      *
@@ -111,7 +101,7 @@ is considered to be not a multigraph by default (each edge is unique).`
      *
      * @returns true if node was removed; false otherwise.
      */
-    removeNode: q,
+    removeNode: C,
     /**
      * Gets node with given identifier. If node does not exist undefined value is returned.
      *
@@ -119,13 +109,13 @@ is considered to be not a multigraph by default (each edge is unique).`
      *
      * @return {node} in with requested identifier or undefined if no such node exists.
      */
-    getNode: p,
+    getNode: s,
     /**
      * Gets number of nodes in this graph.
      *
      * @return number of nodes in the graph.
      */
-    getNodeCount: M,
+    getNodeCount: S,
     /**
      * Gets total number of links in the graph.
      */
@@ -141,7 +131,7 @@ is considered to be not a multigraph by default (each edge is unique).`
     /**
      * Synonym for `getNodeCount()`
      */
-    getNodesCount: M,
+    getNodesCount: S,
     /**
      * Gets all links (inbound and outbound) from the node with given id.
      * If node with given id is not found null is returned.
@@ -151,14 +141,14 @@ is considered to be not a multigraph by default (each edge is unique).`
      * @return Set of links from and to requested node if such node exists;
      *   otherwise null is returned.
      */
-    getLinks: D,
+    getLinks: z,
     /**
      * Invokes callback on each node of the graph.
      *
      * @param {Function(node)} callback Function to be invoked. The function
      *   is passed one argument: visited node.
      */
-    forEachNode: O,
+    forEachNode: M,
     /**
      * Invokes callback on every linked (adjacent) node to the given one.
      *
@@ -184,12 +174,12 @@ is considered to be not a multigraph by default (each edge is unique).`
      * Suspend all notifications about graph changes until
      * endUpdate is called.
      */
-    beginUpdate: l,
+    beginUpdate: k,
     /**
      * Resumes all notifications about graph changes and fires
      * graph 'changed' event in case there are any pending changes.
      */
-    endUpdate: w,
+    endUpdate: L,
     /**
      * Removes all nodes and links from the graph.
      */
@@ -201,7 +191,7 @@ is considered to be not a multigraph by default (each edge is unique).`
      *
      * @returns link if there is one. null otherwise.
      */
-    hasLink: y,
+    hasLink: E,
     /**
      * Detects whether there is a node with given id
      * 
@@ -210,7 +200,7 @@ is considered to be not a multigraph by default (each edge is unique).`
      *
      * @returns node if there is one; Falsy value otherwise.
      */
-    hasNode: p,
+    hasNode: s,
     /**
      * Gets an edge between two nodes.
      * Operation complexity is O(n) where n - number of links of a node.
@@ -220,152 +210,152 @@ is considered to be not a multigraph by default (each edge is unique).`
      *
      * @returns link if there is one; undefined otherwise.
      */
-    getLink: y
+    getLink: E
   };
-  return j(k), F(), k;
-  function F() {
-    var e = k.on;
-    k.on = n;
+  return Q(g), U(), g;
+  function U() {
+    var e = g.on;
+    g.on = n;
     function n() {
-      return k.beginUpdate = l = J, k.endUpdate = w = K, v = P, g = T, k.on = e, e.apply(k, arguments);
+      return g.beginUpdate = k = H, g.endUpdate = L = J, p = A, w = F, g.on = e, e.apply(g, arguments);
     }
   }
-  function P(e, n) {
-    c.push({
+  function A(e, n) {
+    l.push({
       link: e,
       changeType: n
     });
   }
-  function T(e, n) {
-    c.push({
+  function F(e, n) {
+    l.push({
       node: e,
       changeType: n
     });
   }
-  function m(e, n) {
+  function N(e, n) {
     if (e === void 0)
       throw new Error("Invalid node identifier");
-    l();
-    var r = p(e);
-    return r ? (r.data = n, g(r, "update")) : (r = new I(e, n), g(r, "add")), f.set(e, r), w(), r;
+    k();
+    var r = s(e);
+    return r ? (r.data = n, w(r, "update")) : (r = new _(e, n), w(r, "add")), i.set(e, r), L(), r;
   }
-  function p(e) {
-    return f.get(e);
+  function s(e) {
+    return i.get(e);
   }
-  function q(e) {
-    var n = p(e);
+  function C(e) {
+    var n = s(e);
     if (!n)
       return !1;
-    l();
+    k();
     var r = n.links;
-    return r && (r.forEach(S), n.links = null), f.delete(e), g(n, "remove"), w(), !0;
+    return r && (r.forEach(b), n.links = null), i.delete(e), w(n, "remove"), L(), !0;
   }
-  function b(e, n, r) {
-    l();
-    var o = p(e) || m(e), s = p(n) || m(n), d = h(e, n, r), L = u.has(d.id);
-    return u.set(d.id, d), R(o, d), e !== n && R(s, d), v(d, L ? "update" : "add"), w(), d;
+  function R(e, n, r) {
+    k();
+    var a = s(e) || N(e), d = s(n) || N(n), u = c(e, n, r), v = o.has(u.id);
+    return o.set(u.id, u), q(a, u), e !== n && q(d, u), p(u, v ? "update" : "add"), L(), u;
   }
-  function A(e, n, r) {
-    var o = N(e, n), s = u.get(o);
-    return s ? (s.data = r, s) : new _(e, n, r, o);
+  function T(e, n, r) {
+    var a = m(e, n), d = o.get(a);
+    return d ? (d.data = r, d) : new O(e, n, r, a);
   }
-  function z(e, n, r) {
-    var o = N(e, n), s = i.hasOwnProperty(o);
-    if (s || y(e, n)) {
-      s || (i[o] = 0);
-      var d = "@" + ++i[o];
-      o = N(e + d, n + d);
+  function P(e, n, r) {
+    var a = m(e, n), d = f.hasOwnProperty(a);
+    if (d || E(e, n)) {
+      d || (f[a] = 0);
+      var u = "@" + ++f[a];
+      a = m(e + u, n + u);
     }
-    return new _(e, n, r, o);
+    return new O(e, n, r, a);
   }
-  function M() {
-    return f.size;
+  function S() {
+    return i.size;
   }
   function x() {
-    return u.size;
+    return o.size;
   }
-  function D(e) {
-    var n = p(e);
+  function z(e) {
+    var n = s(e);
     return n ? n.links : null;
   }
   function G(e, n) {
-    return n !== void 0 && (e = y(e, n)), S(e);
+    return n !== void 0 && (e = E(e, n)), b(e);
   }
-  function S(e) {
-    if (!e || !u.get(e.id)) return !1;
-    l(), u.delete(e.id);
-    var n = p(e.fromId), r = p(e.toId);
-    return n && n.links.delete(e), r && r.links.delete(e), v(e, "remove"), w(), !0;
+  function b(e) {
+    if (!e || !o.get(e.id)) return !1;
+    k(), o.delete(e.id);
+    var n = s(e.fromId), r = s(e.toId);
+    return n && n.links.delete(e), r && r.links.delete(e), p(e, "remove"), L(), !0;
   }
-  function y(e, n) {
+  function E(e, n) {
     if (!(e === void 0 || n === void 0))
-      return u.get(N(e, n));
+      return o.get(m(e, n));
   }
   function V() {
-    l(), O(function(e) {
-      q(e.id);
-    }), w();
+    k(), M(function(e) {
+      C(e.id);
+    }), L();
   }
   function W(e) {
     if (typeof e == "function")
-      for (var n = u.values(), r = n.next(); !r.done; ) {
+      for (var n = o.values(), r = n.next(); !r.done; ) {
         if (e(r.value))
           return !0;
         r = n.next();
       }
   }
   function Y(e, n, r) {
-    var o = p(e);
-    if (o && o.links && typeof n == "function")
-      return r ? H(o.links, e, n) : B(o.links, e, n);
+    var a = s(e);
+    if (a && a.links && typeof n == "function")
+      return r ? D(a.links, e, n) : B(a.links, e, n);
   }
   function B(e, n, r) {
-    for (var o, s = e.values(), d = s.next(); !d.done; ) {
-      var L = d.value, Q = L.fromId === n ? L.toId : L.fromId;
-      if (o = r(f.get(Q), L), o)
+    for (var a, d = e.values(), u = d.next(); !u.done; ) {
+      var v = u.value, K = v.fromId === n ? v.toId : v.fromId;
+      if (a = r(i.get(K), v), a)
         return !0;
-      d = s.next();
+      u = d.next();
     }
   }
-  function H(e, n, r) {
-    for (var o, s = e.values(), d = s.next(); !d.done; ) {
-      var L = d.value;
-      if (L.fromId === n && (o = r(f.get(L.toId), L), o))
+  function D(e, n, r) {
+    for (var a, d = e.values(), u = d.next(); !u.done; ) {
+      var v = u.value;
+      if (v.fromId === n && (a = r(i.get(v.toId), v), a))
         return !0;
-      d = s.next();
+      u = d.next();
     }
   }
-  function E() {
+  function y() {
+  }
+  function H() {
+    h += 1;
   }
   function J() {
-    a += 1;
+    h -= 1, h === 0 && l.length > 0 && (g.fire("changed", l), l.length = 0);
   }
-  function K() {
-    a -= 1, a === 0 && c.length > 0 && (k.fire("changed", c), c.length = 0);
-  }
-  function O(e) {
+  function M(e) {
     if (typeof e != "function")
       throw new Error("Function is expected to iterate over graph nodes. You passed " + e);
-    for (var n = f.values(), r = n.next(); !r.done; ) {
+    for (var n = i.values(), r = n.next(); !r.done; ) {
       if (e(r.value))
         return !0;
       r = n.next();
     }
   }
 }
-function I(t, f) {
-  this.id = t, this.links = null, this.data = f;
+function _(t, i) {
+  this.id = t, this.links = null, this.data = i;
 }
-function R(t, f) {
-  t.links ? t.links.add(f) : t.links = /* @__PURE__ */ new Set([f]);
+function q(t, i) {
+  t.links ? t.links.add(i) : t.links = /* @__PURE__ */ new Set([i]);
 }
-function _(t, f, u, i) {
-  this.fromId = t, this.toId = f, this.data = u, this.id = i;
+function O(t, i, o, f) {
+  this.fromId = t, this.toId = i, this.data = o, this.id = f;
 }
-function N(t, f) {
-  return t.toString() + "👉 " + f.toString();
+function m(t, i) {
+  return t.toString() + "👉 " + i.toString();
 }
 export {
-  ee as default
+  $ as default
 };
 //# sourceMappingURL=ngraph.graph.es.js.map

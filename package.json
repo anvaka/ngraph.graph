@@ -1,14 +1,15 @@
 {
   "name": "ngraph.graph",
-  "version": "20.1.0",
+  "version": "20.1.1",
   "description": "graph data structure",
   "type": "module",
-  "main": "dist/ngraph.graph.umd.js",
+  "main": "dist/ngraph.graph.umd.cjs",
   "types": "index.d.ts",
   "jsdelivr": "dist/ngraph.graph.umd.js",
   "unpkg": "dist/ngraph.graph.umd.js",
   "scripts": {
     "build": "vite build",
+    "postbuild": "node -e \"require('fs').copyFileSync('dist/ngraph.graph.umd.js','dist/ngraph.graph.umd.cjs')\"",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage"
@@ -49,7 +50,7 @@
     ".": {
       "types": "./index.d.ts",
       "import": "./index.js",
-      "require": "./dist/ngraph.graph.umd.js"
+      "require": "./dist/ngraph.graph.umd.cjs"
     },
     "./dist/*": "./dist/*"
   },
