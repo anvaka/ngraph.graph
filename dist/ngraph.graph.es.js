@@ -1,16 +1,16 @@
-function Q(t) {
-  Z(t);
-  const i = X(t);
+function X(t) {
+  _(t);
+  const i = Z(t);
   return t.on = i.on, t.off = i.off, t.fire = i.fire, t;
 }
-function X(t) {
+function Z(t) {
   let i = /* @__PURE__ */ Object.create(null);
   return {
-    on: function(o, f, h) {
+    on: function(o, f, g) {
       if (typeof f != "function")
         throw new Error("callback is expected to be a function");
       let c = i[o];
-      return c || (c = i[o] = []), c.push({ callback: f, ctx: h }), t;
+      return c || (c = i[o] = []), c.push({ callback: f, ctx: g }), t;
     },
     off: function(o, f) {
       if (typeof o > "u")
@@ -29,17 +29,17 @@ function X(t) {
       const f = i[o];
       if (!f)
         return t;
-      let h;
-      arguments.length > 1 && (h = Array.prototype.slice.call(arguments, 1));
+      let g;
+      arguments.length > 1 && (g = Array.prototype.slice.call(arguments, 1));
       for (let c = 0; c < f.length; ++c) {
         const l = f[c];
-        l.callback.apply(l.ctx, h);
+        l.callback.apply(l.ctx, g);
       }
       return t;
     }
   };
 }
-function Z(t) {
+function _(t) {
   if (!t)
     throw new Error("Eventify cannot use falsy object as events subject");
   const i = ["on", "fire", "off"];
@@ -47,7 +47,7 @@ function Z(t) {
     if (t.hasOwnProperty(i[o]))
       throw new Error("Subject cannot be eventified, since it already has property '" + i[o] + "'");
 }
-function $(t) {
+function I(t) {
   if (t = t || {}, "uniqueLinkId" in t && (console.warn(
     "ngraph.graph: Starting from version 0.14 `uniqueLinkId` is deprecated.\nUse `multigraph` option instead\n",
     `
@@ -56,7 +56,7 @@ function $(t) {
 is considered to be not a multigraph by default (each edge is unique).`
   ), t.multigraph = t.uniqueLinkId), t.multigraph === void 0 && (t.multigraph = !1), typeof Map != "function")
     throw new Error("ngraph.graph requires `Map` to be defined. Please polyfill it before using ngraph");
-  var i = /* @__PURE__ */ new Map(), o = /* @__PURE__ */ new Map(), f = {}, h = 0, c = t.multigraph ? P : T, l = [], p = y, w = y, k = y, L = y, g = {
+  var i = /* @__PURE__ */ new Map(), o = /* @__PURE__ */ new Map(), f = {}, g = 0, c = t.multigraph ? P : T, l = [], p = E, w = E, k = E, L = E, h = {
     /**
      * Sometimes duck typing could be slow. Giving clients a hint about data structure
      * via explicit version number here:
@@ -92,7 +92,7 @@ is considered to be not a multigraph by default (each edge is unique).`
      *
      * @returns true if link was removed; false otherwise.
      */
-    removeLink: G,
+    removeLink: B,
     /**
      * Removes node with given id from the graph. If node does not exist in the graph
      * does nothing.
@@ -191,7 +191,7 @@ is considered to be not a multigraph by default (each edge is unique).`
      *
      * @returns link if there is one. null otherwise.
      */
-    hasLink: E,
+    hasLink: y,
     /**
      * Detects whether there is a node with given id
      * 
@@ -210,14 +210,22 @@ is considered to be not a multigraph by default (each edge is unique).`
      *
      * @returns link if there is one; undefined otherwise.
      */
-    getLink: E
+    getLink: y,
+    /**
+     * Gets a link by its id.
+     *
+     * @param {string} linkId link identifier
+     *
+     * @returns link if there is one; undefined otherwise.
+     */
+    getLinkById: G
   };
-  return Q(g), U(), g;
+  return X(h), U(), h;
   function U() {
-    var e = g.on;
-    g.on = n;
+    var e = h.on;
+    h.on = n;
     function n() {
-      return g.beginUpdate = k = H, g.endUpdate = L = J, p = A, w = F, g.on = e, e.apply(g, arguments);
+      return h.beginUpdate = k = J, h.endUpdate = L = K, p = A, w = F, h.on = e, e.apply(h, arguments);
     }
   }
   function A(e, n) {
@@ -237,7 +245,7 @@ is considered to be not a multigraph by default (each edge is unique).`
       throw new Error("Invalid node identifier");
     k();
     var r = s(e);
-    return r ? (r.data = n, w(r, "update")) : (r = new _(e, n), w(r, "add")), i.set(e, r), L(), r;
+    return r ? (r.data = n, w(r, "update")) : (r = new $(e, n), w(r, "add")), i.set(e, r), L(), r;
   }
   function s(e) {
     return i.get(e);
@@ -261,7 +269,7 @@ is considered to be not a multigraph by default (each edge is unique).`
   }
   function P(e, n, r) {
     var a = m(e, n), d = f.hasOwnProperty(a);
-    if (d || E(e, n)) {
+    if (d || y(e, n)) {
       d || (f[a] = 0);
       var u = "@" + ++f[a];
       a = m(e + u, n + u);
@@ -278,8 +286,8 @@ is considered to be not a multigraph by default (each edge is unique).`
     var n = s(e);
     return n ? n.links : null;
   }
-  function G(e, n) {
-    return n !== void 0 && (e = E(e, n)), b(e);
+  function B(e, n) {
+    return n !== void 0 && (e = y(e, n)), b(e);
   }
   function b(e) {
     if (!e || !o.get(e.id)) return !1;
@@ -287,9 +295,13 @@ is considered to be not a multigraph by default (each edge is unique).`
     var n = s(e.fromId), r = s(e.toId);
     return n && n.links.delete(e), r && r.links.delete(e), p(e, "remove"), L(), !0;
   }
-  function E(e, n) {
+  function y(e, n) {
     if (!(e === void 0 || n === void 0))
       return o.get(m(e, n));
+  }
+  function G(e) {
+    if (e !== void 0)
+      return o.get(e);
   }
   function V() {
     k(), M(function(e) {
@@ -307,17 +319,17 @@ is considered to be not a multigraph by default (each edge is unique).`
   function Y(e, n, r) {
     var a = s(e);
     if (a && a.links && typeof n == "function")
-      return r ? D(a.links, e, n) : B(a.links, e, n);
+      return r ? H(a.links, e, n) : D(a.links, e, n);
   }
-  function B(e, n, r) {
+  function D(e, n, r) {
     for (var a, d = e.values(), u = d.next(); !u.done; ) {
-      var v = u.value, K = v.fromId === n ? v.toId : v.fromId;
-      if (a = r(i.get(K), v), a)
+      var v = u.value, Q = v.fromId === n ? v.toId : v.fromId;
+      if (a = r(i.get(Q), v), a)
         return !0;
       u = d.next();
     }
   }
-  function D(e, n, r) {
+  function H(e, n, r) {
     for (var a, d = e.values(), u = d.next(); !u.done; ) {
       var v = u.value;
       if (v.fromId === n && (a = r(i.get(v.toId), v), a))
@@ -325,13 +337,13 @@ is considered to be not a multigraph by default (each edge is unique).`
       u = d.next();
     }
   }
-  function y() {
-  }
-  function H() {
-    h += 1;
+  function E() {
   }
   function J() {
-    h -= 1, h === 0 && l.length > 0 && (g.fire("changed", l), l.length = 0);
+    g += 1;
+  }
+  function K() {
+    g -= 1, g === 0 && l.length > 0 && (h.fire("changed", l), l.length = 0);
   }
   function M(e) {
     if (typeof e != "function")
@@ -343,7 +355,7 @@ is considered to be not a multigraph by default (each edge is unique).`
     }
   }
 }
-function _(t, i) {
+function $(t, i) {
   this.id = t, this.links = null, this.data = i;
 }
 function q(t, i) {
@@ -356,6 +368,6 @@ function m(t, i) {
   return t.toString() + "👉 " + i.toString();
 }
 export {
-  $ as default
+  I as default
 };
 //# sourceMappingURL=ngraph.graph.es.js.map

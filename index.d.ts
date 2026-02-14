@@ -88,14 +88,11 @@ declare module "ngraph.graph" {
          * Removes a link from the graph. You'll need to pass an actual link instance
          * to remove it. If you pass two arguments, the function assumes they represent
          * from/to node ids, and removes the corresponding link.
-         * 
+         *
          * Returns true if link is found and removed. False otherwise.
          */
-        removeLink: (link: Link<LinkData>) => boolean
-        /**
-         * Overload: remove link by from/to node ids.
-         */
-        removeLink: (fromNodeId: NodeId, toNodeId: NodeId) => boolean
+        removeLink(link: Link<LinkData>): boolean
+        removeLink(fromNodeId: NodeId, toNodeId: NodeId): boolean
 
         /**
          * Removes node by node id. Returns true if node was removed,
