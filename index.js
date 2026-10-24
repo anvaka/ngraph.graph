@@ -425,7 +425,7 @@ function createGraph(options) {
     if (!link) {
       return false;
     }
-    if (!links.get(link.id)) return false;
+    if (links.get(link.id) !== link) return false;
 
     enterModification();
 
