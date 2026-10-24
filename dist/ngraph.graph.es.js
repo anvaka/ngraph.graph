@@ -290,7 +290,7 @@ is considered to be not a multigraph by default (each edge is unique).`
     return n !== void 0 && (e = y(e, n)), b(e);
   }
   function b(e) {
-    if (!e || !o.get(e.id)) return !1;
+    if (!e || o.get(e.id) !== e) return !1;
     k(), o.delete(e.id);
     var n = s(e.fromId), r = s(e.toId);
     return n && n.links.delete(e), r && r.links.delete(e), p(e, "remove"), L(), !0;
